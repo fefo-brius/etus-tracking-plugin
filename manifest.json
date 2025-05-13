@@ -1,5 +1,5 @@
 {
-  "name": "hello-world",
+  "name": "Tracking Plusdin",
   "id": "1503857877844983964",
   "api": "1.0.0",
   "main": "code.js",
@@ -16,7 +16,9 @@
   "networkAccess": {
     "allowedDomains": [
       "https://script.google.com",
-      "https://*.googleapis.com"
+      "https://*.googleapis.com",
+      "https://*.googleusercontent.com",
+      "https://sheets.googleapis.com"
     ]
   }
 }

@@ -1,93 +1,790 @@
-<style>
-  body {
-    font-family: 'Inter', sans-serif;
-    margin: 0;
-    padding: 20px;
-    color: #333;
-    background: #fff;
-  }
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Language" content="pt-br">
+  <style>
+    :root {
+      --figma-color-bg: var(--figma-color-bg, #fff);
+      --figma-color-text: var(--figma-color-text, #333);
+      --figma-color-border: var(--figma-color-border, #e5e5e5);
+      --figma-color-icon: var(--figma-color-icon, #333);
+      --figma-color-bg-hover: var(--figma-color-bg-hover, #f5f5f5);
+      --figma-color-bg-active: var(--figma-color-bg-active, #e5e5e5);
+      --figma-color-bg-brand: var(--figma-color-bg-brand, #0095ff);
+      --figma-color-text-brand: var(--figma-color-text-brand, #fff);
+      --figma-color-bg-brand-hover: var(--figma-color-bg-brand-hover, #0078cc);
+      
+      --error-color: #e74c3c;
+      --success-color: #2ecc71;
+      --warning-color: #f39c12;
+      
+      --interaction-color: #FFC700;
+      --app-screen-view-color: #00A3FF;
+      --msg-view-color: #EBFF00;
+      --answer-quiz-color: #D3AFEF;
+      --quiz-success-color: #FC82FF;
+      --cta-click-color: #FC82FF;
+      --ad-view-color: #82FF9D;
+      --ad-click-color: #26D14C;
+    }
 
-  h2 {
-    font-size: 16px;
-    font-weight: 600;
-    margin-top: 0;
-    margin-bottom: 16px;
-  }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 16px;
+      color: var(--figma-color-text);
+      background: var(--figma-color-bg);
+      font-size: 13px;
+      line-height: 1.5;
+    }
 
-  p {
-    font-size: 12px;
-    margin-bottom: 12px;
-  }
+    h1 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
 
-  input[type="text"] {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #e5e5e5;
-    font-size: 12px;
-    margin-bottom: 16px;
-  }
+    h2 {
+      font-size: 16px;
+      font-weight: 500;
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
 
-  button {
-    background-color: #0095ff;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 8px 16px;
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    width: 100%;
-  }
+    p {
+      margin-bottom: 12px;
+    }
 
-  button:hover {
-    background-color: #0078cc;
-  }
+    input[type="text"], 
+    textarea,
+    select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--figma-color-border);
+      font-size: 13px;
+      margin-bottom: 12px;
+      background-color: var(--figma-color-bg);
+      color: var(--figma-color-text);
+    }
 
-  .container {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  
-  .checkbox-container {
-    display: flex;
-    align-items: center;
-    margin-bottom: 16px;
-  }
-  
-  .checkbox-container input[type="checkbox"] {
-    margin-right: 8px;
-  }
-  
-  .checkbox-container label {
-    font-size: 12px;
-  }
-</style>
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
 
-<div class="container">
-  <h2>Adicionar novo tracking</h2>
-  <p>Digite o ID do tracking que deseja incluir:</p>
-  <input id="number-input" type="text" value="000" placeholder="Digite o número">
-  
-  <div class="checkbox-container">
-    <input type="checkbox" id="save-to-sheet" checked>
-    <label for="save-to-sheet">Salvar esse ID na planilha</label>
-  </div>
-  
-  <button id="create">Create Frame</button>
-</div>
+    button {
+      background-color: var(--figma-color-bg-brand);
+      color: var(--figma-color-text-brand);
+      border: none;
+      border-radius: 6px;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
 
-<script>
-  document.getElementById('create').onclick = () => {
-    const numberInput = document.getElementById('number-input').value;
-    const saveToSheet = document.getElementById('save-to-sheet').checked;
+    button:hover {
+      background-color: var(--figma-color-bg-brand-hover);
+    }
+
+    button:disabled {
+      background-color: var(--figma-color-border);
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .main-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .btn-group button {
+      flex: 1;
+      height: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 8px;
+    }
+
+    .icon {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .selection-info {
+      margin-bottom: 16px;
+      padding: 12px;
+      background-color: var(--figma-color-bg-hover);
+      border-radius: 6px;
+      font-size: 13px;
+    }
+
+    .selection-info div {
+      margin-bottom: 4px;
+    }
+
+    .selection-info strong {
+      font-weight: 600;
+    }
+
+    .error-message {
+      color: var(--error-color);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .success-message {
+      color: var(--success-color);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .no-selection {
+      color: var(--error-color);
+    }
+
+    .dialog {
+      padding: 16px;
+      border-radius: 6px;
+      border: 1px solid var(--figma-color-border);
+      margin-bottom: 16px;
+      background-color: var(--figma-color-bg-hover);
+    }
+
+    .dialog-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .search-box {
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .search-box input {
+      padding-left: 32px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--figma-color-icon);
+      opacity: 0.5;
+    }
+
+    .events-list {
+      max-height: 350px;
+      overflow-y: auto;
+      margin-bottom: 16px;
+      border: 1px solid var(--figma-color-border);
+      border-radius: 6px;
+    }
+
+    .event-item {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--figma-color-border);
+      cursor: pointer;
+      transition: background-color 0.1s;
+    }
+
+    .event-item:last-child {
+      border-bottom: none;
+    }
+
+    .event-item:hover {
+      background-color: var(--figma-color-bg-hover);
+    }
+
+    .event-item-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .event-id {
+      font-weight: 600;
+      color: var(--figma-color-bg-brand);
+    }
+
+    .event-type {
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background-color: var(--interaction-color);
+      display: inline-block;
+    }
+
+    .event-type.interaction { background-color: var(--interaction-color); color: #000; }
+    .event-type.app_screen_view { background-color: var(--app-screen-view-color); color: #fff; }
+    .event-type.msg_view { background-color: var(--msg-view-color); color: #000; }
+    .event-type.answer_quiz { background-color: var(--answer-quiz-color); color: #000; }
+    .event-type.quiz_success { background-color: var(--quiz-success-color); color: #fff; }
+    .event-type.cta_click { background-color: var(--cta-click-color); color: #fff; }
+    .event-type.ad_view { background-color: var(--ad-view-color); color: #000; }
+    .event-type.ad_click { background-color: var(--ad-click-color); color: #fff; }
+
+    .event-details {
+      font-size: 12px;
+      color: var(--figma-color-text);
+      opacity: 0.8;
+    }
+
+    .back-button {
+      margin-bottom: 16px;
+    }
+
+    .back-button button {
+      background-color: transparent;
+      color: var(--figma-color-text);
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .back-button button:hover {
+      background-color: var(--figma-color-bg-hover);
+    }
+
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: var(--figma-color-text);
+      opacity: 0.7;
+    }
+
+    .d-none {
+      display: none !important;
+    }
+
+    .screen {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .action-buttons {
+      margin-top: auto;
+      display: flex;
+      gap: 8px;
+      padding-top: 16px;
+    }
+
+    .full-width {
+      width: 100%;
+    }
+
+    .secondary-button {
+      background-color: transparent;
+      color: var(--figma-color-text);
+      border: 1px solid var(--figma-color-border);
+    }
+
+    .secondary-button:hover {
+      background-color: var(--figma-color-bg-hover);
+    }
+  </style>
+</head>
+<body>
+  <div class="main-container" id="app">
+    <!-- Tela inicial com as opções -->
+    <div id="main-screen" class="screen">
+      <h1>Rastreamento Plusdin</h1>
+      <p>Escolha uma das opções abaixo:</p>
+      
+      <div class="btn-group">
+        <button id="btn-new-event">
+          <span class="icon">+</span>
+          <span>Criar novo evento</span>
+        </button>
+        <button id="btn-existing-event">
+          <span class="icon">↓</span>
+          <span>Inserir evento existente</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tela de novo evento -->
+    <div id="new-event-screen" class="screen d-none">
+      <div class="back-button">
+        <button id="back-to-main-from-new">← Voltar</button>
+      </div>
+      
+      <h2>Criar novo evento</h2>
+      
+      <div class="selection-info" id="selection-info">
+        <div class="no-selection">Nenhum elemento selecionado</div>
+      </div>
+      
+      <form id="new-event-form">
+        <div class="form-group">
+          <label for="event-type">Tipo de evento *</label>
+          <select id="event-type" required>
+            <option value="">Selecione um tipo</option>
+            <option value="interaction">interaction</option>
+            <option value="app_screen_view">app_screen_view</option>
+            <option value="msg_view">msg_view</option>
+            <option value="answer_quiz">answer_quiz</option>
+            <option value="quiz_success">quiz_success</option>
+            <option value="cta_click">cta_click</option>
+            <option value="ad_view">ad_view</option>
+            <option value="ad_click">ad_click</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="screen-name">Screen Name *</label>
+          <input type="text" id="screen-name" required placeholder="Nome do frame principal">
+        </div>
+
+        <div class="form-group">
+          <label for="screen-type">Screen Type *</label>
+          <input type="text" id="screen-type" required placeholder="Tipo da tela">
+        </div>
+
+        <div class="form-group">
+          <label for="component">Componente *</label>
+          <input type="text" id="component" required placeholder="Tipo do componente">
+        </div>
+
+        <div class="form-group">
+          <label for="element-text">Element Text *</label>
+          <input type="text" id="element-text" required placeholder="Texto do componente">
+        </div>
+
+        <div class="form-group">
+          <label for="description">Descrição *</label>
+          <textarea id="description" required maxlength="300" placeholder="Descreva o objetivo deste evento"></textarea>
+        </div>
+
+        <div class="action-buttons">
+          <button type="button" id="btn-cancel-creation" class="secondary-button">Cancelar</button>
+          <button type="submit" id="btn-create-event" class="full-width">Criar Evento</button>
+        </div>
+      </form>
+
+      <!-- Diálogo para evento duplicado -->
+      <div id="duplicate-event-dialog" class="dialog d-none">
+        <h2>Evento semelhante encontrado</h2>
+        <p>Um evento com características semelhantes já existe:</p>
+        <div id="existing-event-info"></div>
+        <div class="dialog-actions">
+          <button id="btn-use-existing" class="full-width">Usar Evento Existente</button>
+          <button id="btn-create-anyway" class="secondary-button">Criar Novo Mesmo Assim</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tela de eventos existentes -->
+    <div id="existing-event-screen" class="screen d-none">
+      <div class="back-button">
+        <button id="back-to-main-from-existing">← Voltar</button>
+      </div>
+      
+      <h2>Selecionar evento existente</h2>
+      
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-events" placeholder="Buscar por ID, nome ou tipo">
+      </div>
+      
+      <div id="events-container" class="events-list">
+        <div class="loading">Carregando eventos...</div>
+      </div>
+      
+      <div class="action-buttons">
+        <button id="btn-cancel-selection" class="secondary-button">Cancelar</button>
+        <button id="btn-refresh-events" class="full-width">Atualizar Lista</button>
+      </div>
+    </div>
     
-    parent.postMessage({ pluginMessage: { 
-      type: 'create-component',
-      number: numberInput || "000", // Usa 000 como padrão se nada for inserido
-      saveToSheet: saveToSheet
-    }}, '*')
-  }
-</script>
+    <!-- Tela de confirmação -->
+    <div id="confirmation-screen" class="screen d-none">
+      <h2>Evento adicionado com sucesso!</h2>
+      <p>O evento foi criado e adicionado ao seu design.</p>
+      
+      <div class="action-buttons">
+        <button id="btn-add-another" class="secondary-button">Adicionar Outro</button>
+        <button id="btn-close-plugin" class="full-width">Fechar Plugin</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Controle de navegação entre telas
+    const screens = {
+      main: document.getElementById('main-screen'),
+      newEvent: document.getElementById('new-event-screen'),
+      existingEvent: document.getElementById('existing-event-screen'),
+      confirmation: document.getElementById('confirmation-screen')
+    };
+
+    function showScreen(screenId) {
+      Object.keys(screens).forEach(key => {
+        screens[key].classList.add('d-none');
+      });
+      screens[screenId].classList.remove('d-none');
+    }
+
+    // Navegação principal
+    document.getElementById('btn-new-event').onclick = () => showScreen('newEvent');
+    document.getElementById('btn-existing-event').onclick = () => {
+      showScreen('existingEvent');
+      loadExistingEvents();
+    };
+    document.getElementById('back-to-main-from-new').onclick = () => showScreen('main');
+    document.getElementById('back-to-main-from-existing').onclick = () => showScreen('main');
+    document.getElementById('btn-cancel-creation').onclick = () => showScreen('main');
+    document.getElementById('btn-cancel-selection').onclick = () => showScreen('main');
+    document.getElementById('btn-close-plugin').onclick = () => {
+      parent.postMessage({ pluginMessage: { type: 'close-plugin' } }, '*');
+    };
+    document.getElementById('btn-add-another').onclick = () => showScreen('main');
+    document.getElementById('btn-refresh-events').onclick = () => loadExistingEvents();
+
+    // Controle de dados da seleção
+    let selectionInfo = null;
+    let existingEvents = [];
+    let currentExistingEvent = null;
+
+    // Converte texto para snake_case
+    function toSnakeCase(text) {
+      return text
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '_')
+        .replace(/[^\w_]/g, '')
+        .replace(/__+/g, '_');
+    }
+
+    // Atualiza a UI com as informações do elemento selecionado
+    function updateSelectionInfo() {
+      const infoContainer = document.getElementById('selection-info');
+      
+      if (selectionInfo) {
+        let html = `
+          <div><strong>Nome do Nó:</strong> ${selectionInfo.nodeName}</div>
+          <div><strong>Tipo:</strong> ${selectionInfo.nodeType}</div>
+        `;
+        
+        if (selectionInfo.parentFrame) {
+          html += `<div><strong>Frame Pai:</strong> ${selectionInfo.parentFrame}</div>`;
+          
+          // Preenche o campo screen-name apenas se não tiver sido modificado
+          const screenNameInput = document.getElementById('screen-name');
+          if (!screenNameInput.dataset.userModified) {
+            screenNameInput.value = toSnakeCase(selectionInfo.parentFrame);
+          }
+        }
+        
+        if (selectionInfo.elementText) {
+          html += `<div><strong>Texto:</strong> ${selectionInfo.elementText}</div>`;
+          
+          // Preenche o campo element-text apenas se não tiver sido modificado
+          const elementTextInput = document.getElementById('element-text');
+          if (!elementTextInput.dataset.userModified) {
+            elementTextInput.value = selectionInfo.elementText;
+          }
+        }
+
+        html += `<div><strong>Componente:</strong> ${selectionInfo.componentType}</div>`;
+        
+        // Preenche o campo component apenas se não tiver sido modificado
+        const componentInput = document.getElementById('component');
+        if (!componentInput.dataset.userModified) {
+          componentInput.value = toSnakeCase(selectionInfo.componentType);
+        }
+        
+        infoContainer.innerHTML = html;
+      } else {
+        infoContainer.innerHTML = `<div class="no-selection">Nenhum elemento selecionado</div>`;
+      }
+    }
+
+    // Verificar seleção periódica
+    let lastSelectionId = null;
+    
+    setInterval(() => {
+      parent.postMessage({ pluginMessage: { type: 'check-selection' } }, '*');
+    }, 1000);
+
+    // Receber mensagens do plugin
+    onmessage = (event) => {
+      const message = event.data.pluginMessage;
+      
+      switch (message.type) {
+        case 'selection-info':
+          // Verifica se a seleção realmente mudou
+          const selectionId = message.info ? message.info.nodeName : 'none';
+          const selectionChanged = selectionId !== lastSelectionId;
+          
+          if (selectionChanged) {
+            lastSelectionId = selectionId;
+            selectionInfo = message.info;
+            updateSelectionInfo();
+          }
+          break;
+          
+        case 'events-list':
+          existingEvents = message.events;
+          renderEventsList();
+          break;
+          
+        case 'events-list-error':
+          document.getElementById('events-container').innerHTML = 
+            `<div class="error-message" style="padding: 16px;">Erro ao carregar eventos: ${message.error}</div>`;
+          break;
+          
+        case 'event-exists':
+          currentExistingEvent = message.existingEvent;
+          showDuplicateDialog();
+          break;
+          
+        case 'validation-error':
+          // Destacar campo com erro
+          const field = document.getElementById(message.field.replace('_', '-'));
+          if (field) {
+            field.style.borderColor = 'var(--error-color)';
+            field.focus();
+          }
+          break;
+          
+        case 'event-created':
+        case 'event-added':
+          showScreen('confirmation');
+          break;
+          
+        case 'error':
+          alert(`Erro: ${message.message}`);
+          break;
+      }
+    };
+
+    // Formulário de novo evento
+    document.getElementById('new-event-form').onsubmit = (e) => {
+      e.preventDefault();
+      
+      const eventData = {
+        event_name: document.getElementById('event-type').value,
+        screen_name: document.getElementById('screen-name').value,
+        screen_type: document.getElementById('screen-type').value,
+        component: document.getElementById('component').value,
+        element_text: document.getElementById('element-text').value,
+        descricao: document.getElementById('description').value
+      };
+      
+      // Validação básica
+      for (const key in eventData) {
+        if (!eventData[key]) {
+          const fieldId = key.replace('_', '-');
+          const field = document.getElementById(fieldId);
+          if (field) {
+            field.style.borderColor = 'var(--error-color)';
+            field.focus();
+          }
+          return;
+        }
+      }
+      
+      // Enviar para o plugin
+      parent.postMessage({ 
+        pluginMessage: { 
+          type: 'create-event',
+          eventData: eventData
+        }
+      }, '*');
+    };
+
+    // Diálogo de evento duplicado
+    function showDuplicateDialog() {
+      const dialog = document.getElementById('duplicate-event-dialog');
+      const infoContainer = document.getElementById('existing-event-info');
+      
+      let html = `
+        <div><strong>ID:</strong> ${currentExistingEvent.event_id}</div>
+        <div><strong>Nome:</strong> ${currentExistingEvent.event_name}</div>
+        <div><strong>Tela:</strong> ${currentExistingEvent.screen_name}</div>
+        <div><strong>Componente:</strong> ${currentExistingEvent.component}</div>
+        <div><strong>Texto:</strong> ${currentExistingEvent.element_text}</div>
+      `;
+      
+      infoContainer.innerHTML = html;
+      dialog.classList.remove('d-none');
+    }
+
+    // Botões do diálogo de duplicidade
+    document.getElementById('btn-use-existing').onclick = () => {
+      document.getElementById('duplicate-event-dialog').classList.add('d-none');
+      
+      parent.postMessage({ 
+        pluginMessage: { 
+          type: 'use-existing-event',
+          event: currentExistingEvent
+        }
+      }, '*');
+    };
+
+    document.getElementById('btn-create-anyway').onclick = () => {
+      document.getElementById('duplicate-event-dialog').classList.add('d-none');
+      
+      // Criar novo evento ignorando a duplicidade
+      const eventData = {
+        event_name: document.getElementById('event-type').value,
+        screen_name: document.getElementById('screen-name').value,
+        screen_type: document.getElementById('screen-type').value,
+        component: document.getElementById('component').value,
+        element_text: document.getElementById('element-text').value,
+        descricao: document.getElementById('description').value,
+        force: true
+      };
+      
+      parent.postMessage({ 
+        pluginMessage: { 
+          type: 'create-event',
+          eventData: eventData
+        }
+      }, '*');
+    };
+
+    // Carregar eventos existentes
+    function loadExistingEvents() {
+      document.getElementById('events-container').innerHTML = '<div class="loading">Carregando eventos...</div>';
+      parent.postMessage({ pluginMessage: { type: 'list-events' } }, '*');
+    }
+
+    // Filtrar eventos
+    document.getElementById('search-events').oninput = (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      renderEventsList(searchTerm);
+    };
+
+    // Renderizar lista de eventos
+    function renderEventsList(searchTerm = '') {
+      const container = document.getElementById('events-container');
+      
+      if (!existingEvents || existingEvents.length === 0) {
+        container.innerHTML = '<div style="padding: 16px;">Nenhum evento encontrado.</div>';
+        return;
+      }
+      
+      // Filtrar eventos
+      let filteredEvents = existingEvents;
+      if (searchTerm) {
+        const terms = searchTerm.toLowerCase().split(' ').filter(term => term.trim() !== '');
+        
+        // Filtrar eventos que correspondam a todos os termos
+        filteredEvents = existingEvents.filter(event => {
+          const eventText = `${event.event_id} ${event.screen_name} ${event.screen_type} ${event.event_name} ${event.element_text}`.toLowerCase();
+          return terms.every(term => eventText.includes(term));
+        });
+      }
+      
+      // Limitar para os primeiros 100 para performance
+      const displayEvents = filteredEvents.slice(0, 100);
+      
+      if (filteredEvents.length === 0) {
+        container.innerHTML = '<div style="padding: 16px;">Nenhum evento corresponde à sua busca.</div>';
+        return;
+      }
+      
+      let html = '';
+      
+      for (const event of displayEvents) {
+        html += `
+          <div class="event-item" data-id="${event.event_id}" data-type="${event.event_name}">
+            <div class="event-item-header">
+              <span class="event-id">#${event.event_id}</span>
+              <span class="event-type ${event.event_name}">${event.event_name}</span>
+            </div>
+            <div class="event-details">
+              <div>${event.screen_name} - ${event.component}</div>
+              <div>${event.element_text}</div>
+            </div>
+          </div>
+        `;
+      }
+      
+      container.innerHTML = html;
+      
+      if (filteredEvents.length > 100) {
+        const infoElement = document.createElement('div');
+        infoElement.style.padding = '8px 12px';
+        infoElement.style.fontSize = '12px';
+        infoElement.style.color = 'var(--figma-color-text)';
+        infoElement.style.opacity = '0.7';
+        infoElement.style.textAlign = 'center';
+        infoElement.textContent = `Exibindo 100 de ${filteredEvents.length} resultados. Refine sua busca para ver mais.`;
+        container.appendChild(infoElement);
+      }
+      
+      // Adicionar eventos de clique nos itens
+      document.querySelectorAll('.event-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const eventId = item.getAttribute('data-id');
+          const eventType = item.getAttribute('data-type');
+          
+          if (confirm(`Deseja adicionar o evento #${eventId} ao seu design?`)) {
+            parent.postMessage({ 
+              pluginMessage: { 
+                type: 'add-existing-event',
+                eventId: eventId,
+                eventType: eventType
+              }
+            }, '*');
+          }
+        });
+      });
+    }
+
+    // Inicializar
+    document.addEventListener('DOMContentLoaded', () => {
+      // Marcador para campos editados pelo usuário
+      const inputFields = ['screen-name', 'element-text', 'component', 'screen-type', 'description'];
+      
+      inputFields.forEach(id => {
+        const field = document.getElementById(id);
+        if (field) {
+          field.addEventListener('input', function() {
+            this.dataset.userModified = 'true';
+            // Resetar cor de borda se havia erro
+            this.style.borderColor = '';
+          });
+        }
+      });
+      
+      // Verificar seleção inicial
+      parent.postMessage({ pluginMessage: { type: 'check-selection' } }, '*');
+    });
+  </script>
+</body>
+</html>
