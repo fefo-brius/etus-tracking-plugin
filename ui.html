@@ -4,191 +4,260 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Language" content="pt-br">
   <style>
+    /* Design Tokens */
     :root {
-      --figma-color-bg: var(--figma-color-bg, #fff);
-      --figma-color-text: var(--figma-color-text, #333);
-      --figma-color-border: var(--figma-color-border, #e5e5e5);
-      --figma-color-icon: var(--figma-color-icon, #333);
-      --figma-color-bg-hover: var(--figma-color-bg-hover, #f5f5f5);
-      --figma-color-bg-active: var(--figma-color-bg-active, #e5e5e5);
-      --figma-color-bg-brand: var(--figma-color-bg-brand, #0095ff);
-      --figma-color-text-brand: var(--figma-color-text-brand, #fff);
-      --figma-color-bg-brand-hover: var(--figma-color-bg-brand-hover, #0078cc);
+      /* Colors */
+      --color-primary: #0095ff;
+      --color-primary-hover: #0078cc;
+      --color-border: #e5e5e5;
+      --color-background: #fff;
+      --color-text: #333;
+      --color-text-light: #666;
+      --color-error: #ff4444;
+      --color-success: #00c853;
       
-      --error-color: #e74c3c;
-      --success-color: #2ecc71;
-      --warning-color: #f39c12;
+      /* Spacing */
+      --spacing-xxs: 4px;
+      --spacing-xs: 8px;
+      --spacing-sm: 12px;
+      --spacing-md: 16px;
+      --spacing-lg: 20px;
+      --spacing-xl: 24px;
       
-      --interaction-color: #FFC700;
-      --app-screen-view-color: #00A3FF;
-      --msg-view-color: #EBFF00;
-      --answer-quiz-color: #D3AFEF;
-      --quiz-success-color: #FC82FF;
-      --cta-click-color: #FC82FF;
-      --ad-view-color: #82FF9D;
-      --ad-click-color: #26D14C;
+      /* Typography */
+      --font-size-xs: 11px;
+      --font-size-sm: 12px;
+      --font-size-md: 14px;
+      --font-size-lg: 16px;
+      
+      /* Border Radius */
+      --border-radius: 6px;
+      
+      /* Event Type Specific Colors */
+      --interaction-color: #FF5722;
+      --app-screen-view-color: #4CAF50;
+      --msg-view-color: #2196F3;
+      --answer-quiz-color: #9C27B0;
+      --quiz-success-color: #FFEB3B;
+      --cta-click-color: #F44336;
+      --ad-view-color: #795548;
+      --ad-click-color: #607D8B;
+      
+      /* Color for events not in our list */
+      --default-event-color: #9E9E9E;
+    }
+
+    /* Reset Styles */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      margin: 0;
-      padding: 16px;
-      color: var(--figma-color-text);
-      background: var(--figma-color-bg);
-      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      color: var(--color-text);
+      background: var(--color-background);
       line-height: 1.5;
     }
 
+    /* Typography */
     h1 {
-      font-size: 18px;
+      font-size: var(--font-size-lg);
       font-weight: 600;
-      margin-top: 0;
-      margin-bottom: 16px;
+      margin: 0 0 var(--spacing-md);
+      color: var(--color-text);
     }
 
     h2 {
-      font-size: 16px;
-      font-weight: 500;
-      margin-top: 0;
-      margin-bottom: 16px;
+      font-size: var(--font-size-lg);
+      font-weight: 600;
+      margin: 0 0 var(--spacing-xxs);
+    }
+
+    h3 {
+      font-size: var(--font-size-lg);
+      font-weight: 600;
+      margin: 0 0 var(--spacing-md);
     }
 
     p {
-      margin-bottom: 12px;
+      font-size: var(--font-size-sm);
+      margin: 0 0 var(--spacing-sm);
+      color: var(--color-text-light);
+    }
+
+    label {
+      display: block;
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      margin-bottom: var(--spacing-xs);
+      color: var(--color-text);
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: var(--spacing-md);
+      position: relative;
     }
 
     input[type="text"], 
-    textarea,
-    select {
+    select,
+    textarea {
       width: 100%;
       box-sizing: border-box;
-      padding: 8px 10px;
-      border-radius: 6px;
-      border: 1px solid var(--figma-color-border);
-      font-size: 13px;
-      margin-bottom: 12px;
-      background-color: var(--figma-color-bg);
-      color: var(--figma-color-text);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      border-radius: var(--border-radius);
+      border: 1px solid var(--color-border);
+      font-size: var(--font-size-sm);
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--color-primary);
     }
 
     textarea {
-      resize: vertical;
       min-height: 80px;
+      resize: vertical;
     }
 
+    .error-message {
+      color: var(--color-error);
+      font-size: var(--font-size-xs);
+      margin-top: var(--spacing-xxs);
+    }
+
+    .input-error {
+      border-color: var(--color-error) !important;
+    }
+
+    .custom-select .select-selected.input-error {
+      border-color: var(--color-error) !important;
+    }
+
+    .required-field-info {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-light);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    /* Buttons */
     button {
-      background-color: var(--figma-color-bg-brand);
-      color: var(--figma-color-text-brand);
+      background-color: var(--color-primary);
+      color: white;
       border: none;
-      border-radius: 6px;
-      padding: 10px 16px;
-      font-size: 13px;
+      border-radius: var(--border-radius);
+      padding: var(--spacing-xs) var(--spacing-md);
+      font-size: var(--font-size-sm);
       font-weight: 500;
       cursor: pointer;
+      width: 100%;
       transition: background-color 0.2s;
     }
 
     button:hover {
-      background-color: var(--figma-color-bg-brand-hover);
+      background-color: var(--color-primary-hover);
     }
 
-    button:disabled {
-      background-color: var(--figma-color-border);
-      cursor: not-allowed;
-      opacity: 0.7;
+    button.button-secondary {
+      background: var(--color-border);
+      color: var(--color-text);
     }
 
+    /* Container and Layout */
     .main-container {
       display: flex;
       flex-direction: column;
+      gap: var(--spacing-xs);
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
       height: 100%;
+      padding: var(--spacing-lg);
+      box-sizing: border-box;
     }
 
-    .btn-group {
+    .d-none {
+      display: none !important;
+    }
+
+    /* Tabs Component */
+    .tabs {
       display: flex;
-      gap: 12px;
-      margin-bottom: 20px;
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: var(--spacing-md);
     }
-
-    .btn-group button {
-      flex: 1;
-      height: 80px;
+    
+    .tab {
+      padding: var(--spacing-xs) var(--spacing-md);
+      cursor: pointer;
+      font-size: var(--font-size-md);
+      font-weight: 500;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s ease;
+      color: var(--color-text-light);
+    }
+    
+    .tab:hover {
+      color: var(--color-primary);
+    }
+    
+    .tab.active {
+      color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
+    }
+    
+    .tab-content {
+      flex-grow: 1;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      gap: 8px;
+    }
+    
+    .tab-pane {
+      display: none;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+    
+    .tab-pane.active {
+      display: flex;
     }
 
-    .icon {
-      font-size: 24px;
-      margin-bottom: 4px;
-    }
-
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 500;
-    }
-
+    /* Selection Info */
     .selection-info {
-      margin-bottom: 16px;
-      padding: 12px;
-      background-color: var(--figma-color-bg-hover);
-      border-radius: 6px;
-      font-size: 13px;
-    }
-
-    .selection-info div {
-      margin-bottom: 4px;
-    }
-
-    .selection-info strong {
-      font-weight: 600;
-    }
-
-    .error-message {
-      color: var(--error-color);
-      font-size: 12px;
-      margin-top: 4px;
-    }
-
-    .success-message {
-      color: var(--success-color);
-      font-size: 12px;
-      margin-top: 4px;
+      background-color: rgba(0, 0, 0, 0.03);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-sm);
+      margin-bottom: var(--spacing-md);
+      font-size: var(--font-size-sm);
     }
 
     .no-selection {
-      color: var(--error-color);
+      color: var(--color-text-light);
+      font-style: italic;
     }
 
-    .dialog {
-      padding: 16px;
-      border-radius: 6px;
-      border: 1px solid var(--figma-color-border);
-      margin-bottom: 16px;
-      background-color: var(--figma-color-bg-hover);
+    .selection-detail strong {
+      font-weight: 600;
+      display: inline-block;
+      width: 80px;
     }
 
-    .dialog-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 16px;
-    }
-
+    /* Events List */
     .search-box {
-      margin-bottom: 16px;
       position: relative;
+      margin-bottom: var(--spacing-md);
     }
 
     .search-box input {
-      padding-left: 32px;
+      padding-left: 30px;
     }
 
     .search-icon {
@@ -196,23 +265,22 @@
       left: 10px;
       top: 50%;
       transform: translateY(-50%);
-      color: var(--figma-color-icon);
-      opacity: 0.5;
+      color: var(--color-text-light);
     }
 
     .events-list {
-      max-height: 350px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      max-height: 300px;
       overflow-y: auto;
-      margin-bottom: 16px;
-      border: 1px solid var(--figma-color-border);
-      border-radius: 6px;
+      margin-bottom: var(--spacing-md);
     }
 
     .event-item {
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--figma-color-border);
+      padding: var(--spacing-sm);
+      border-bottom: 1px solid var(--color-border);
       cursor: pointer;
-      transition: background-color 0.1s;
+      transition: background-color 0.2s;
     }
 
     .event-item:last-child {
@@ -220,128 +288,217 @@
     }
 
     .event-item:hover {
-      background-color: var(--figma-color-bg-hover);
+      background-color: rgba(0, 0, 0, 0.05);
     }
 
-    .event-item-header {
+    .event-item.selected {
+      background-color: rgba(0, 149, 255, 0.08);
+      border-left: 3px solid var(--color-primary);
+    }
+
+    .event-header {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 4px;
+      align-items: center;
+      margin-bottom: var(--spacing-xs);
     }
 
     .event-id {
       font-weight: 600;
-      color: var(--figma-color-bg-brand);
+      font-size: var(--font-size-sm);
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-right: var(--spacing-xs);
+      color: white;
+      background-color: var(--color-primary);
     }
 
     .event-type {
-      font-size: 12px;
+      font-size: var(--font-size-xs);
+      color: var(--color-text);
+      background-color: rgba(0,0,0,0.08);
       padding: 2px 6px;
       border-radius: 4px;
-      background-color: var(--interaction-color);
-      display: inline-block;
     }
-
-    .event-type.interaction { background-color: var(--interaction-color); color: #000; }
-    .event-type.app_screen_view { background-color: var(--app-screen-view-color); color: #fff; }
-    .event-type.msg_view { background-color: var(--msg-view-color); color: #000; }
-    .event-type.answer_quiz { background-color: var(--answer-quiz-color); color: #000; }
-    .event-type.quiz_success { background-color: var(--quiz-success-color); color: #fff; }
-    .event-type.cta_click { background-color: var(--cta-click-color); color: #fff; }
-    .event-type.ad_view { background-color: var(--ad-view-color); color: #000; }
-    .event-type.ad_click { background-color: var(--ad-click-color); color: #fff; }
 
     .event-details {
-      font-size: 12px;
-      color: var(--figma-color-text);
-      opacity: 0.8;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--spacing-xs);
+      font-size: var(--font-size-xs);
+      color: var(--color-text-light);
     }
 
-    .back-button {
-      margin-bottom: 16px;
+    .event-detail {
+      display: flex;
+      flex-direction: column;
     }
 
-    .back-button button {
-      background-color: transparent;
-      color: var(--figma-color-text);
-      padding: 8px 12px;
+    .detail-label {
+      font-weight: 500;
+      color: var(--color-text);
+      font-size: 10px;
+    }
+
+    .detail-value {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Filters */
+    .filters-container {
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      margin-bottom: var(--spacing-md);
+      overflow: hidden;
+    }
+
+    .filters-header {
+      padding: var(--spacing-xs) var(--spacing-sm);
+      background-color: #f8f9fa;
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 4px;
+      transition: background-color 0.2s;
     }
 
-    .back-button button:hover {
-      background-color: var(--figma-color-bg-hover);
+    .filters-header:hover {
+      background-color: #f1f3f5;
+    }
+
+    .filter-icon, .arrow-icon {
+      margin-right: var(--spacing-xs);
+    }
+
+    .filters-body {
+      padding: var(--spacing-sm);
+      border-top: 1px solid var(--color-border);
+      display: none;
+    }
+
+    .filters-body.open {
+      display: block;
+    }
+
+    .filter-group {
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .filter-group label {
+      font-size: var(--font-size-xs);
+      margin-bottom: var(--spacing-xxs);
+    }
+
+    .filter-group input {
+      width: 100%;
+      padding: var(--spacing-xs) var(--spacing-sm);
+      border-radius: var(--border-radius);
+      border: 1px solid var(--color-border);
+      font-size: var(--font-size-sm);
+      transition: border-color 0.2s;
+    }
+
+    .filter-group input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+    }
+
+    .filter-actions {
+      display: flex;
+      gap: var(--spacing-xs);
+      margin-top: var(--spacing-sm);
+    }
+
+    #apply-filters, #clear-filters {
+      font-size: var(--font-size-xs);
+      padding: var(--spacing-xxs) var(--spacing-xs);
+      margin-top: var(--spacing-xs);
     }
 
     .loading {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      color: var(--figma-color-text);
-      opacity: 0.7;
+      padding: var(--spacing-md);
+      text-align: center;
+      color: var(--color-text-light);
     }
 
-    .d-none {
-      display: none !important;
+    /* Dialog */
+    .dialog {
+      background-color: var(--color-background);
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: var(--spacing-md);
+      max-width: 400px;
+      margin: 0 auto;
     }
 
-    .screen {
+    .dialog-actions {
       display: flex;
       flex-direction: column;
-      height: 100%;
+      gap: var(--spacing-xs);
+      margin-top: var(--spacing-md);
+    }
+    
+    /* Resize Handle */
+    #resize-handle {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 20px;
+      height: 20px;
+      cursor: nwse-resize;
+      background: linear-gradient(135deg, transparent 11px, var(--color-primary) 0);
+      border-radius: 0 0 var(--border-radius) 0;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    
+    #resize-handle:hover {
+      opacity: 1;
     }
 
+    /* Action Buttons */
     .action-buttons {
-      margin-top: auto;
       display: flex;
-      gap: 8px;
-      padding-top: 16px;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+      margin-top: auto;
+      padding-top: var(--spacing-lg);
     }
 
+    /* Utility Classes */
     .full-width {
       width: 100%;
     }
 
     .secondary-button {
       background-color: transparent;
-      color: var(--figma-color-text);
-      border: 1px solid var(--figma-color-border);
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
     }
 
     .secondary-button:hover {
-      background-color: var(--figma-color-bg-hover);
+      background-color: rgba(0, 0, 0, 0.05);
     }
   </style>
 </head>
 <body>
   <div class="main-container" id="app">
-    <!-- Tela inicial com as opções -->
-    <div id="main-screen" class="screen">
       <h1>Rastreamento Plusdin</h1>
-      <p>Escolha uma das opções abaixo:</p>
-      
-      <div class="btn-group">
-        <button id="btn-new-event">
-          <span class="icon">+</span>
-          <span>Criar novo evento</span>
-        </button>
-        <button id="btn-existing-event">
-          <span class="icon">↓</span>
-          <span>Inserir evento existente</span>
-        </button>
-      </div>
+    
+    <!-- Tabs Navigation -->
+    <div class="tabs" id="main-tabs">
+      <div class="tab active" data-tab="new-event">Criar novo evento</div>
+      <div class="tab" data-tab="existing-event">Inserir evento existente</div>
     </div>
 
-    <!-- Tela de novo evento -->
-    <div id="new-event-screen" class="screen d-none">
-      <div class="back-button">
-        <button id="back-to-main-from-new">← Voltar</button>
-      </div>
-      
-      <h2>Criar novo evento</h2>
-      
+    <!-- Tab Content -->
+    <div class="tab-content">
+      <!-- Conteúdo da Tab "Criar novo evento" -->
+      <div id="new-event-content" class="tab-pane active">
       <div class="selection-info" id="selection-info">
         <div class="no-selection">Nenhum elemento selecionado</div>
       </div>
@@ -388,7 +545,6 @@
         </div>
 
         <div class="action-buttons">
-          <button type="button" id="btn-cancel-creation" class="secondary-button">Cancelar</button>
           <button type="submit" id="btn-create-event" class="full-width">Criar Evento</button>
         </div>
       </form>
@@ -405,26 +561,49 @@
       </div>
     </div>
 
-    <!-- Tela de eventos existentes -->
-    <div id="existing-event-screen" class="screen d-none">
-      <div class="back-button">
-        <button id="back-to-main-from-existing">← Voltar</button>
-      </div>
-      
-      <h2>Selecionar evento existente</h2>
-      
+      <!-- Conteúdo da Tab "Inserir evento existente" -->
+      <div id="existing-event-content" class="tab-pane">
       <div class="search-box">
         <span class="search-icon">🔍</span>
         <input type="text" id="search-events" placeholder="Buscar por ID, nome ou tipo">
       </div>
+        
+        <!-- Filtros para a lista de eventos -->
+        <div class="filters-container">
+          <div class="filters-header" id="toggle-filters">
+            <span class="filter-icon">🔍</span> Filtros avançados <span class="arrow-icon">▼</span>
+          </div>
+          <div class="filters-body" id="filters-body">
+            <div class="filter-group">
+              <label for="filter-screen-type">Screen Type</label>
+              <input type="text" id="filter-screen-type" placeholder="Filtrar por screen type">
+            </div>
+            <div class="filter-group">
+              <label for="filter-screen-name">Screen Name</label>
+              <input type="text" id="filter-screen-name" placeholder="Filtrar por screen name">
+            </div>
+            <div class="filter-group">
+              <label for="filter-component">Component</label>
+              <input type="text" id="filter-component" placeholder="Filtrar por componente">
+            </div>
+            <div class="filter-group">
+              <label for="filter-element-text">Element Text</label>
+              <input type="text" id="filter-element-text" placeholder="Filtrar por element text">
+            </div>
+            <div class="filter-actions">
+              <button id="apply-filters" class="full-width">Aplicar Filtros</button>
+              <button id="clear-filters" class="secondary-button">Limpar</button>
+            </div>
+          </div>
+        </div>
       
       <div id="events-container" class="events-list">
         <div class="loading">Carregando eventos...</div>
       </div>
       
       <div class="action-buttons">
-        <button id="btn-cancel-selection" class="secondary-button">Cancelar</button>
         <button id="btn-refresh-events" class="full-width">Atualizar Lista</button>
+        </div>
       </div>
     </div>
     
@@ -434,336 +613,528 @@
       <p>O evento foi criado e adicionado ao seu design.</p>
       
       <div class="action-buttons">
-        <button id="btn-add-another" class="secondary-button">Adicionar Outro</button>
-        <button id="btn-close-plugin" class="full-width">Fechar Plugin</button>
+        <button id="btn-back-to-tabs" class="full-width">Voltar</button>
       </div>
     </div>
   </div>
 
+  <div id="resize-handle"></div>
+
   <script>
-    // Controle de navegação entre telas
-    const screens = {
-      main: document.getElementById('main-screen'),
-      newEvent: document.getElementById('new-event-screen'),
-      existingEvent: document.getElementById('existing-event-screen'),
-      confirmation: document.getElementById('confirmation-screen')
-    };
+    // Variáveis globais
+    let selectedEventId = null;
+    let selectedEventType = null;
+    let eventsData = [];
 
-    function showScreen(screenId) {
-      Object.keys(screens).forEach(key => {
-        screens[key].classList.add('d-none');
+    // Funções de utilidade
+    function $(id) {
+      return document.getElementById(id);
+    }
+
+    function showElement(id) {
+      $(id).classList.remove('d-none');
+    }
+
+    function hideElement(id) {
+      $(id).classList.add('d-none');
+    }
+
+    // Função para mostrar a tela de confirmação
+    function showConfirmation() {
+      // Esconder conteúdo das tabs
+      $('tab-content').classList.add('d-none');
+      // Mostrar tela de confirmação
+      showElement('confirmation-screen');
+    }
+
+    // Função para voltar às tabs
+    function backToTabs() {
+      // Esconder tela de confirmação
+      hideElement('confirmation-screen');
+      // Mostrar conteúdo das tabs
+      $('tab-content').classList.remove('d-none');
+      // Resetar o formulário
+      $('new-event-form').reset();
+      // Limpar seleção de elementos
+      $('selection-info').innerHTML = '<div class="no-selection">Nenhum elemento selecionado</div>';
+      // Resetar a lista de eventos
+      loadEvents();
+    }
+
+    // Função para alternar entre as tabs
+    function switchTab(tabId) {
+      // Remover a classe active de todas as tabs
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
       });
-      screens[screenId].classList.remove('d-none');
-    }
-
-    // Navegação principal
-    document.getElementById('btn-new-event').onclick = () => showScreen('newEvent');
-    document.getElementById('btn-existing-event').onclick = () => {
-      showScreen('existingEvent');
-      loadExistingEvents();
-    };
-    document.getElementById('back-to-main-from-new').onclick = () => showScreen('main');
-    document.getElementById('back-to-main-from-existing').onclick = () => showScreen('main');
-    document.getElementById('btn-cancel-creation').onclick = () => showScreen('main');
-    document.getElementById('btn-cancel-selection').onclick = () => showScreen('main');
-    document.getElementById('btn-close-plugin').onclick = () => {
-      parent.postMessage({ pluginMessage: { type: 'close-plugin' } }, '*');
-    };
-    document.getElementById('btn-add-another').onclick = () => showScreen('main');
-    document.getElementById('btn-refresh-events').onclick = () => loadExistingEvents();
-
-    // Controle de dados da seleção
-    let selectionInfo = null;
-    let existingEvents = [];
-    let currentExistingEvent = null;
-
-    // Converte texto para snake_case
-    function toSnakeCase(text) {
-      return text
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, '_')
-        .replace(/[^\w_]/g, '')
-        .replace(/__+/g, '_');
-    }
-
-    // Atualiza a UI com as informações do elemento selecionado
-    function updateSelectionInfo() {
-      const infoContainer = document.getElementById('selection-info');
       
-      if (selectionInfo) {
-        let html = `
-          <div><strong>Nome do Nó:</strong> ${selectionInfo.nodeName}</div>
-          <div><strong>Tipo:</strong> ${selectionInfo.nodeType}</div>
-        `;
-        
-        if (selectionInfo.parentFrame) {
-          html += `<div><strong>Frame Pai:</strong> ${selectionInfo.parentFrame}</div>`;
-          
-          // Preenche o campo screen-name apenas se não tiver sido modificado
-          const screenNameInput = document.getElementById('screen-name');
-          if (!screenNameInput.dataset.userModified) {
-            screenNameInput.value = toSnakeCase(selectionInfo.parentFrame);
-          }
-        }
-        
-        if (selectionInfo.elementText) {
-          html += `<div><strong>Texto:</strong> ${selectionInfo.elementText}</div>`;
-          
-          // Preenche o campo element-text apenas se não tiver sido modificado
-          const elementTextInput = document.getElementById('element-text');
-          if (!elementTextInput.dataset.userModified) {
-            elementTextInput.value = selectionInfo.elementText;
-          }
-        }
+      // Adicionar a classe active à tab selecionada
+      document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
+      
+      // Esconder todos os conteúdos de tab
+      document.querySelectorAll('.tab-pane').forEach(pane => {
+        pane.classList.remove('active');
+      });
+      
+      // Mostrar o conteúdo da tab selecionada
+      $(`${tabId}-content`).classList.add('active');
+    }
 
-        html += `<div><strong>Componente:</strong> ${selectionInfo.componentType}</div>`;
-        
-        // Preenche o campo component apenas se não tiver sido modificado
-        const componentInput = document.getElementById('component');
-        if (!componentInput.dataset.userModified) {
-          componentInput.value = toSnakeCase(selectionInfo.componentType);
-        }
-        
-        infoContainer.innerHTML = html;
-      } else {
-        infoContainer.innerHTML = `<div class="no-selection">Nenhum elemento selecionado</div>`;
+    // Função para atualizar as informações do elemento selecionado
+    function updateSelectionInfo(info) {
+      const selectionInfo = $('selection-info');
+      
+      if (!info) {
+        selectionInfo.innerHTML = '<div class="no-selection">Nenhum elemento selecionado</div>';
+        return;
+      }
+      
+      selectionInfo.innerHTML = `
+        <div class="selection-detail"><strong>Nome:</strong> ${info.nodeName || 'N/A'}</div>
+        <div class="selection-detail"><strong>Tipo:</strong> ${info.nodeType || 'N/A'}</div>
+        ${info.parentFrame ? `<div class="selection-detail"><strong>Frame:</strong> ${info.parentFrame}</div>` : ''}
+        ${info.elementText ? `<div class="selection-detail"><strong>Texto:</strong> ${info.elementText}</div>` : ''}
+        <div class="selection-detail"><strong>Componente:</strong> ${info.componentType || 'N/A'}</div>
+      `;
+      
+      // Preencher campos do formulário com as informações do elemento
+      if (!$('screen-name').dataset.userModified && info.parentFrame) {
+        $('screen-name').value = info.parentFrame;
+      }
+      
+      if (!$('element-text').dataset.userModified && info.elementText) {
+        $('element-text').value = info.elementText;
+      }
+      
+      if (!$('component').dataset.userModified && info.componentType) {
+        $('component').value = info.componentType;
       }
     }
 
-    // Verificar seleção periódica
-    let lastSelectionId = null;
-    
-    setInterval(() => {
-      parent.postMessage({ pluginMessage: { type: 'check-selection' } }, '*');
-    }, 1000);
-
-    // Receber mensagens do plugin
-    onmessage = (event) => {
-      const message = event.data.pluginMessage;
+    // Funções para gerenciar eventos
+    function createEvent() {
+      const eventType = $('event-type').value;
+      const screenName = $('screen-name').value;
+      const elementText = $('element-text').value;
+      const component = $('component').value;
+      const screenType = $('screen-type').value;
+      const description = $('description').value;
       
-      switch (message.type) {
-        case 'selection-info':
-          // Verifica se a seleção realmente mudou
-          const selectionId = message.info ? message.info.nodeName : 'none';
-          const selectionChanged = selectionId !== lastSelectionId;
-          
-          if (selectionChanged) {
-            lastSelectionId = selectionId;
-            selectionInfo = message.info;
-            updateSelectionInfo();
+      // Validar campos
+      if (!eventType || !screenName || !elementText || !component || !screenType || !description) {
+        // Marcar os campos vazios com erro
+        const formFields = ['event-type', 'screen-name', 'element-text', 'component', 'screen-type', 'description'];
+        let hasError = false;
+        
+        formFields.forEach(fieldId => {
+          const field = $(fieldId);
+          if (!field.value.trim()) {
+            field.classList.add('input-error');
+            hasError = true;
+          } else {
+            field.classList.remove('input-error');
           }
-          break;
-          
-        case 'events-list':
-          existingEvents = message.events;
-          renderEventsList();
-          break;
-          
-        case 'events-list-error':
-          document.getElementById('events-container').innerHTML = 
-            `<div class="error-message" style="padding: 16px;">Erro ao carregar eventos: ${message.error}</div>`;
-          break;
-          
-        case 'event-exists':
-          currentExistingEvent = message.existingEvent;
-          showDuplicateDialog();
-          break;
-          
-        case 'validation-error':
-          // Destacar campo com erro
-          const field = document.getElementById(message.field.replace('_', '-'));
-          if (field) {
-            field.style.borderColor = 'var(--error-color)';
-            field.focus();
-          }
-          break;
-          
-        case 'event-created':
-        case 'event-added':
-          showScreen('confirmation');
-          break;
-          
-        case 'error':
-          alert(`Erro: ${message.message}`);
-          break;
-      }
-    };
-
-    // Formulário de novo evento
-    document.getElementById('new-event-form').onsubmit = (e) => {
-      e.preventDefault();
-      
-      const eventData = {
-        event_name: document.getElementById('event-type').value,
-        screen_name: document.getElementById('screen-name').value,
-        screen_type: document.getElementById('screen-type').value,
-        component: document.getElementById('component').value,
-        element_text: document.getElementById('element-text').value,
-        descricao: document.getElementById('description').value
-      };
-      
-      // Validação básica
-      for (const key in eventData) {
-        if (!eventData[key]) {
-          const fieldId = key.replace('_', '-');
-          const field = document.getElementById(fieldId);
-          if (field) {
-            field.style.borderColor = 'var(--error-color)';
-            field.focus();
-          }
+        });
+        
+        if (hasError) {
           return;
         }
       }
       
-      // Enviar para o plugin
+      // Enviar para o código do plugin
       parent.postMessage({ 
         pluginMessage: { 
           type: 'create-event',
-          eventData: eventData
+          eventType,
+          eventData: {
+            event_name: eventType,
+            screen_name: screenName,
+            screen_type: screenType,
+            component: component,
+            element_text: elementText,
+            descricao: description
+          }
         }
       }, '*');
-    };
-
-    // Diálogo de evento duplicado
-    function showDuplicateDialog() {
-      const dialog = document.getElementById('duplicate-event-dialog');
-      const infoContainer = document.getElementById('existing-event-info');
-      
-      let html = `
-        <div><strong>ID:</strong> ${currentExistingEvent.event_id}</div>
-        <div><strong>Nome:</strong> ${currentExistingEvent.event_name}</div>
-        <div><strong>Tela:</strong> ${currentExistingEvent.screen_name}</div>
-        <div><strong>Componente:</strong> ${currentExistingEvent.component}</div>
-        <div><strong>Texto:</strong> ${currentExistingEvent.element_text}</div>
-      `;
-      
-      infoContainer.innerHTML = html;
-      dialog.classList.remove('d-none');
     }
 
-    // Botões do diálogo de duplicidade
-    document.getElementById('btn-use-existing').onclick = () => {
-      document.getElementById('duplicate-event-dialog').classList.add('d-none');
-      
+    // Função para inserir um evento existente
+    function insertExistingEvent(eventId, eventType) {
       parent.postMessage({ 
         pluginMessage: { 
-          type: 'use-existing-event',
-          event: currentExistingEvent
+          type: 'insert-existing-event',
+          eventId,
+          eventType
         }
       }, '*');
-    };
-
-    document.getElementById('btn-create-anyway').onclick = () => {
-      document.getElementById('duplicate-event-dialog').classList.add('d-none');
-      
-      // Criar novo evento ignorando a duplicidade
-      const eventData = {
-        event_name: document.getElementById('event-type').value,
-        screen_name: document.getElementById('screen-name').value,
-        screen_type: document.getElementById('screen-type').value,
-        component: document.getElementById('component').value,
-        element_text: document.getElementById('element-text').value,
-        descricao: document.getElementById('description').value,
-        force: true
-      };
-      
-      parent.postMessage({ 
-        pluginMessage: { 
-          type: 'create-event',
-          eventData: eventData
-        }
-      }, '*');
-    };
-
-    // Carregar eventos existentes
-    function loadExistingEvents() {
-      document.getElementById('events-container').innerHTML = '<div class="loading">Carregando eventos...</div>';
-      parent.postMessage({ pluginMessage: { type: 'list-events' } }, '*');
     }
 
-    // Filtrar eventos
-    document.getElementById('search-events').oninput = (e) => {
-      const searchTerm = e.target.value.toLowerCase();
-      renderEventsList(searchTerm);
-    };
-
-    // Renderizar lista de eventos
-    function renderEventsList(searchTerm = '') {
-      const container = document.getElementById('events-container');
+    // Função para carregar e mostrar eventos existentes
+    function loadEvents() {
+      // Mostrar estado de carregamento
+      $('events-container').innerHTML = '<div class="loading">Carregando eventos...</div>';
       
-      if (!existingEvents || existingEvents.length === 0) {
-        container.innerHTML = '<div style="padding: 16px;">Nenhum evento encontrado.</div>';
-        return;
-      }
-      
-      // Filtrar eventos
-      let filteredEvents = existingEvents;
-      if (searchTerm) {
-        const terms = searchTerm.toLowerCase().split(' ').filter(term => term.trim() !== '');
+      // Simular carregamento (no plugin real, buscar do backend)
+      // Aqui seria uma chamada para a API de eventos
+      // Por enquanto, usando dados de exemplo
+      setTimeout(() => {
+        if (eventsData.length === 0) {
+          // Dados de exemplo - em produção, buscar dados reais
+          eventsData = [
+            { 
+              id: '001', 
+              type: 'interaction', 
+              description: 'Clique no botão de login',
+              screen_name: 'tela_login',
+              screen_type: 'onboarding',
+              component: 'button',
+              element_text: 'entrar'
+            },
+            { 
+              id: '002', 
+              type: 'app_screen_view', 
+              description: 'Visualização da tela principal',
+              screen_name: 'tela_principal',
+              screen_type: 'home',
+              component: 'screen',
+              element_text: 'home'
+            },
+            { 
+              id: '003', 
+              type: 'msg_view', 
+              description: 'Visualização de mensagem de boas vindas',
+              screen_name: 'tela_principal',
+              screen_type: 'home',
+              component: 'message',
+              element_text: 'bem_vindo'
+            },
+            { 
+              id: '004', 
+              type: 'answer_quiz', 
+              description: 'Resposta ao quiz de onboarding',
+              screen_name: 'tela_quiz',
+              screen_type: 'onboarding',
+              component: 'form',
+              element_text: 'submit_quiz'
+            },
+            { 
+              id: '005', 
+              type: 'quiz_success', 
+              description: 'Sucesso no quiz de produto',
+              screen_name: 'tela_quiz',
+              screen_type: 'onboarding',
+              component: 'message',
+              element_text: 'quiz_success'
+            },
+            { 
+              id: '006', 
+              type: 'cta_click', 
+              description: 'Clique no botão de compra',
+              screen_name: 'tela_produto',
+              screen_type: 'produto',
+              component: 'button',
+              element_text: 'comprar'
+            },
+            { 
+              id: '007', 
+              type: 'ad_view', 
+              description: 'Visualização de anúncio',
+              screen_name: 'tela_feed',
+              screen_type: 'feed',
+              component: 'ad',
+              element_text: 'ad_banner'
+            },
+            { 
+              id: '008', 
+              type: 'ad_click', 
+              description: 'Clique em anúncio de produto',
+              screen_name: 'tela_feed',
+              screen_type: 'feed',
+              component: 'ad',
+              element_text: 'ad_cta'
+            }
+          ];
+        }
         
-        // Filtrar eventos que correspondam a todos os termos
-        filteredEvents = existingEvents.filter(event => {
-          const eventText = `${event.event_id} ${event.screen_name} ${event.screen_type} ${event.event_name} ${event.element_text}`.toLowerCase();
-          return terms.every(term => eventText.includes(term));
-        });
-      }
+        // Renderizar eventos
+        renderEvents(eventsData);
+      }, 500);
+    }
+
+    // Função para renderizar a lista de eventos
+    function renderEvents(events) {
+      const container = $('events-container');
       
-      // Limitar para os primeiros 100 para performance
-      const displayEvents = filteredEvents.slice(0, 100);
-      
-      if (filteredEvents.length === 0) {
-        container.innerHTML = '<div style="padding: 16px;">Nenhum evento corresponde à sua busca.</div>';
+      if (!events || events.length === 0) {
+        container.innerHTML = '<div class="loading">Nenhum evento encontrado</div>';
         return;
       }
       
       let html = '';
-      
-      for (const event of displayEvents) {
+      events.forEach(event => {
         html += `
-          <div class="event-item" data-id="${event.event_id}" data-type="${event.event_name}">
-            <div class="event-item-header">
-              <span class="event-id">#${event.event_id}</span>
-              <span class="event-type ${event.event_name}">${event.event_name}</span>
+          <div class="event-item" data-id="${event.id}" data-type="${event.type}">
+            <div class="event-header">
+              <span class="event-id">${event.id}</span>
+              <span class="event-type">${event.type}</span>
             </div>
+            <div class="event-description">${event.description}</div>
             <div class="event-details">
-              <div>${event.screen_name} - ${event.component}</div>
-              <div>${event.element_text}</div>
+              <div class="event-detail">
+                <span class="detail-label">Screen Name:</span>
+                <span class="detail-value">${event.screen_name || 'N/A'}</span>
+              </div>
+              <div class="event-detail">
+                <span class="detail-label">Screen Type:</span>
+                <span class="detail-value">${event.screen_type || 'N/A'}</span>
+              </div>
+              <div class="event-detail">
+                <span class="detail-label">Component:</span>
+                <span class="detail-value">${event.component || 'N/A'}</span>
+              </div>
+              <div class="event-detail">
+                <span class="detail-label">Element Text:</span>
+                <span class="detail-value">${event.element_text || 'N/A'}</span>
+              </div>
             </div>
           </div>
         `;
-      }
+      });
       
       container.innerHTML = html;
       
-      if (filteredEvents.length > 100) {
-        const infoElement = document.createElement('div');
-        infoElement.style.padding = '8px 12px';
-        infoElement.style.fontSize = '12px';
-        infoElement.style.color = 'var(--figma-color-text)';
-        infoElement.style.opacity = '0.7';
-        infoElement.style.textAlign = 'center';
-        infoElement.textContent = `Exibindo 100 de ${filteredEvents.length} resultados. Refine sua busca para ver mais.`;
-        container.appendChild(infoElement);
+      // Adicionar event listeners aos itens
+      const eventItems = document.querySelectorAll('.event-item');
+      eventItems.forEach(item => {
+        item.addEventListener('click', function() {
+          const id = this.dataset.id;
+          const type = this.dataset.type;
+          
+          selectedEventId = id;
+          selectedEventType = type;
+          
+          // Remover seleção anterior
+          eventItems.forEach(i => i.classList.remove('selected'));
+          // Marcar como selecionado
+          this.classList.add('selected');
+          
+          // Inserir o evento
+          insertExistingEvent(id, type);
+        });
+      });
+    }
+
+    // Função para aplicar filtros
+    function applyFilters() {
+      const screenType = $('filter-screen-type').value.toLowerCase().trim();
+      const screenName = $('filter-screen-name').value.toLowerCase().trim();
+      const component = $('filter-component').value.toLowerCase().trim();
+      const elementText = $('filter-element-text').value.toLowerCase().trim();
+      const searchTerm = $('search-events').value.toLowerCase().trim();
+      
+      // Filtrar eventos
+      let filteredEvents = eventsData;
+      
+      // Aplicar filtros de texto para cada campo
+      if (screenType) {
+        filteredEvents = filteredEvents.filter(event => 
+          event.screen_type.toLowerCase().includes(screenType)
+        );
       }
       
-      // Adicionar eventos de clique nos itens
-      document.querySelectorAll('.event-item').forEach(item => {
-        item.addEventListener('click', () => {
-          const eventId = item.getAttribute('data-id');
-          const eventType = item.getAttribute('data-type');
+      if (screenName) {
+        filteredEvents = filteredEvents.filter(event => 
+          event.screen_name.toLowerCase().includes(screenName)
+        );
+      }
+      
+      if (component) {
+        filteredEvents = filteredEvents.filter(event => 
+          event.component.toLowerCase().includes(component)
+        );
+      }
+      
+      if (elementText) {
+        filteredEvents = filteredEvents.filter(event => 
+          event.element_text.toLowerCase().includes(elementText)
+        );
+      }
+      
+      // Aplicar termo de busca
+      if (searchTerm) {
+        filteredEvents = filteredEvents.filter(event => 
+          event.id.toLowerCase().includes(searchTerm) || 
+          event.type.toLowerCase().includes(searchTerm) ||
+          event.description.toLowerCase().includes(searchTerm) ||
+          event.screen_type.toLowerCase().includes(searchTerm) ||
+          event.screen_name.toLowerCase().includes(searchTerm) ||
+          event.component.toLowerCase().includes(searchTerm) ||
+          event.element_text.toLowerCase().includes(searchTerm)
+        );
+      }
+      
+      // Renderizar eventos filtrados
+      renderEvents(filteredEvents);
+    }
+    
+    // Função para limpar todos os filtros
+    function clearFilters() {
+      $('filter-screen-type').value = '';
+      $('filter-screen-name').value = '';
+      $('filter-component').value = '';
+      $('filter-element-text').value = '';
+      $('search-events').value = '';
+      
+      // Recarregar todos os eventos
+      renderEvents(eventsData);
+    }
+
+    // Função para pesquisar eventos
+    function searchEvents(term) {
+      // Simplesmente aplicar os filtros - a busca já é considerada
+      applyFilters();
+    }
+
+    // Setup resize handle functionality
+    function setupResizeHandle() {
+      const resizeHandle = $('resize-handle');
+      
+      if (resizeHandle) {
+        let startX, startY, startWidth, startHeight;
+        
+        function startResize(e) {
+          startX = e.clientX;
+          startY = e.clientY;
+          startWidth = parseFloat(document.documentElement.clientWidth);
+          startHeight = parseFloat(document.documentElement.clientHeight);
           
-          if (confirm(`Deseja adicionar o evento #${eventId} ao seu design?`)) {
+          document.addEventListener('mousemove', resize);
+          document.addEventListener('mouseup', stopResize);
+          e.preventDefault();
+        }
+        
+        function resize(e) {
+          const width = startWidth + (e.clientX - startX);
+          const height = startHeight + (e.clientY - startY);
+          
+          // Enviar mensagem para redimensionar
             parent.postMessage({ 
               pluginMessage: { 
-                type: 'add-existing-event',
-                eventId: eventId,
-                eventType: eventType
+              type: 'resize',
+              width: Math.max(300, width),
+              height: Math.max(400, height)
               }
             }, '*');
           }
-        });
-      });
+        
+        function stopResize() {
+          document.removeEventListener('mousemove', resize);
+          document.removeEventListener('mouseup', stopResize);
+        }
+        
+        resizeHandle.addEventListener('mousedown', startResize);
+      }
+    }
+
+    // Função para mostrar o diálogo de evento duplicado
+    function showDuplicateEventDialog(existingEvent) {
+      // Preencher as informações do evento existente
+      const eventInfo = $('existing-event-info');
+      eventInfo.innerHTML = `
+        <div class="event-item">
+          <div class="event-header">
+            <span class="event-id">${existingEvent.event_id}</span>
+            <span class="event-type">${existingEvent.event_name}</span>
+          </div>
+          <div class="event-details">
+            <div class="event-detail">
+              <span class="detail-label">Screen Name:</span>
+              <span class="detail-value">${existingEvent.screen_name || 'N/A'}</span>
+            </div>
+            <div class="event-detail">
+              <span class="detail-label">Screen Type:</span>
+              <span class="detail-value">${existingEvent.screen_type || 'N/A'}</span>
+            </div>
+            <div class="event-detail">
+              <span class="detail-label">Component:</span>
+              <span class="detail-value">${existingEvent.component || 'N/A'}</span>
+            </div>
+            <div class="event-detail">
+              <span class="detail-label">Element Text:</span>
+              <span class="detail-value">${existingEvent.element_text || 'N/A'}</span>
+            </div>
+            <div class="event-detail">
+              <span class="detail-label">Descrição:</span>
+              <span class="detail-value">${existingEvent.descricao || 'N/A'}</span>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      // Guardar o evento atual para uso nos botões
+      $('btn-use-existing').dataset.event = JSON.stringify(existingEvent);
+      
+      // Mostrar o diálogo
+      showElement('duplicate-event-dialog');
+      
+      // Esconder o formulário
+      $('new-event-form').style.display = 'none';
+    }
+    
+    // Função para esconder o diálogo de evento duplicado
+    function hideDuplicateEventDialog() {
+      hideElement('duplicate-event-dialog');
+      $('new-event-form').style.display = 'block';
+    }
+    
+    // Função para usar evento existente
+    function useExistingEvent() {
+      const eventData = JSON.parse($('btn-use-existing').dataset.event || '{}');
+      
+      if (!eventData || !eventData.event_id) {
+        alert('Erro: Dados do evento inválidos');
+        return;
+      }
+      
+      // Enviar para o código do plugin
+      parent.postMessage({ 
+        pluginMessage: { 
+          type: 'use-existing-event',
+          event: eventData
+        }
+      }, '*');
+      
+      // Esconder o diálogo
+      hideDuplicateEventDialog();
+    }
+    
+    // Função para criar novo evento mesmo com duplicidade
+    function createEventAnyway() {
+      const eventType = $('event-type').value;
+      const screenName = $('screen-name').value;
+      const elementText = $('element-text').value;
+      const component = $('component').value;
+      const screenType = $('screen-type').value;
+      const description = $('description').value;
+      
+      // Enviar para o código do plugin
+      parent.postMessage({ 
+        pluginMessage: { 
+          type: 'create-anyway',
+          eventType,
+          eventData: {
+            event_name: eventType,
+            screen_name: screenName,
+            screen_type: screenType,
+            component: component,
+            element_text: elementText,
+            descricao: description
+          }
+        }
+      }, '*');
+      
+      // Esconder o diálogo
+      hideDuplicateEventDialog();
     }
 
     // Inicializar
@@ -772,19 +1143,125 @@
       const inputFields = ['screen-name', 'element-text', 'component', 'screen-type', 'description'];
       
       inputFields.forEach(id => {
-        const field = document.getElementById(id);
+        const field = $(id);
         if (field) {
           field.addEventListener('input', function() {
             this.dataset.userModified = 'true';
             // Resetar cor de borda se havia erro
-            this.style.borderColor = '';
+            this.classList.remove('input-error');
           });
+        }
+      });
+      
+      // Event listeners para tabs
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+          switchTab(this.dataset.tab);
+        });
+      });
+      
+      // Event listener para o formulário de criação de evento
+      $('new-event-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        createEvent();
+      });
+      
+      // Event listener para o botão de voltar na tela de confirmação
+      $('btn-back-to-tabs').addEventListener('click', backToTabs);
+      
+      // Event listener para a pesquisa
+      $('search-events').addEventListener('input', function() {
+        searchEvents(this.value);
+      });
+      
+      // Event listener para o botão de atualizar eventos
+      $('btn-refresh-events').addEventListener('click', loadEvents);
+      
+      // Event listeners para filtros
+      $('toggle-filters').addEventListener('click', function() {
+        const filtersBody = $('filters-body');
+        filtersBody.classList.toggle('open');
+        
+        // Atualizar ícone
+        const arrowIcon = this.querySelector('.arrow-icon');
+        if (filtersBody.classList.contains('open')) {
+          arrowIcon.textContent = '▲';
+        } else {
+          arrowIcon.textContent = '▼';
+        }
+      });
+      
+      // Event listeners para inputs de filtro
+      const filterInputs = ['filter-screen-type', 'filter-screen-name', 'filter-component', 'filter-element-text'];
+      filterInputs.forEach(id => {
+        $(id).addEventListener('input', function() {
+          // Aplicar filtros com delay para não sobrecarregar
+          clearTimeout(this.timer);
+          this.timer = setTimeout(() => {
+            applyFilters();
+          }, 300);
+        });
+      });
+      
+      $('apply-filters').addEventListener('click', applyFilters);
+      $('clear-filters').addEventListener('click', clearFilters);
+      
+      // Event listeners para o diálogo de evento duplicado
+      $('btn-use-existing').addEventListener('click', useExistingEvent);
+      $('btn-create-anyway').addEventListener('click', createEventAnyway);
+      
+      // Atualizar filtros quando a tab for selecionada
+      document.querySelector('.tab[data-tab="existing-event"]').addEventListener('click', function() {
+        // Se não houver dados carregados, carregar
+        if (eventsData.length === 0) {
+          loadEvents();
         }
       });
       
       // Verificar seleção inicial
       parent.postMessage({ pluginMessage: { type: 'check-selection' } }, '*');
+      
+      // Verificar seleção periodicamente
+      setInterval(() => {
+        parent.postMessage({ pluginMessage: { type: 'check-selection' } }, '*');
+      }, 1000);
+      
+      // Carregar eventos
+      loadEvents();
+      
+      // Setup resize handle
+      setupResizeHandle();
     });
+
+    // Receber mensagens do plugin
+    window.onmessage = (event) => {
+      const message = event.data.pluginMessage;
+      
+      if (!message) return;
+      
+      switch (message.type) {
+        case 'selection-info':
+          updateSelectionInfo(message.info);
+          break;
+          
+        case 'event-created':
+          showConfirmation();
+          break;
+          
+        case 'event-inserted':
+          showConfirmation();
+          break;
+          
+        case 'event-exists':
+          // Mostrar diálogo de evento duplicado
+          showDuplicateEventDialog(message.existingEvent);
+          break;
+          
+        case 'error':
+          alert(message.message);
+          break;
+      }
+    };
   </script>
 </body>
 </html>

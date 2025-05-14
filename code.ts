@@ -8,26 +8,45 @@
 // full browser environment (See https://www.figma.com/plugin-docs/how-plugins-run).
 
 // This shows the HTML page in "ui.html".
-figma.showUI(__html__, { 
-  width: 450, 
-  height: 580, 
-  themeColors: true 
-});
+figma.showUI(__html__, { width: 400, height: 550, themeColors: true });
 
 // Google Apps Script web app URL
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby29g4wMjqRFcjGgIBFZLOn3rp4HU8xpgt9OJ2nvv_2LFmabiIBvJI5EdkEP9TKcIZ_Bg/exec';
 
-// Cores para diferentes tipos de eventos
-const EVENT_COLORS = {
-  interaction: { r: 255/255, g: 199/255, b: 0/255 },    // #FFC700
-  app_screen_view: { r: 0/255, g: 163/255, b: 255/255 }, // #00A3FF
-  msg_view: { r: 235/255, g: 255/255, b: 0/255 },       // #EBFF00
-  answer_quiz: { r: 211/255, g: 175/255, b: 239/255 },  // #D3AFEF
-  quiz_success: { r: 252/255, g: 130/255, b: 255/255 }, // #FC82FF
-  cta_click: { r: 252/255, g: 130/255, b: 255/255 },    // #FC82FF
-  ad_view: { r: 130/255, g: 255/255, b: 157/255 },      // #82FF9D
-  ad_click: { r: 0.149, g: 0.82, b: 0.298 }        // #26D14C
+// Cores para diferentes tipos de eventos (valores hexadecimais)
+const EVENT_COLOR_HEX = {
+  interaction: '#FFC700',
+  app_screen_view: '#00A3FF',
+  msg_view: '#EBFF00',
+  answer_quiz: '#D3AFEF',
+  quiz_success: '#FC82FF',
+  cta_click: '#FC82FF',
+  ad_view: '#82FF9D',
+  ad_click: '#26D14C'
 };
+
+// Função para converter hex para RGB (0-1)
+function hexToRgb(hex: string) {
+  // Remover o # se existir
+  hex = hex.replace(/^#/, '');
+  
+  // Converter para RGB
+  const bigint = parseInt(hex, 16);
+  const r = ((bigint >> 16) & 255) / 255;
+  const g = ((bigint >> 8) & 255) / 255;
+  const b = (bigint & 255) / 255;
+  
+  return { r, g, b };
+}
+
+// Converter cores hex para o formato RGB do Figma
+const EVENT_COLORS: Record<string, { r: number, g: number, b: number }> = {};
+for (const key in EVENT_COLOR_HEX) {
+  if (EVENT_COLOR_HEX.hasOwnProperty(key)) {
+    const hexValue = EVENT_COLOR_HEX[key as keyof typeof EVENT_COLOR_HEX];
+    EVENT_COLORS[key] = hexToRgb(hexValue);
+  }
+}
 
 // Lista de tipos de eventos disponíveis
 const EVENT_TYPES = [
@@ -151,6 +170,9 @@ async function createEventFrame(eventId: string, eventType: string) {
       return null;
     }
     
+    // Log para debug
+    console.log(`Criando frame para evento ${eventId} do tipo: ${eventType}`);
+    
     // Carregar fontes necessárias antes de criar texto
     await loadRequiredFonts();
     
@@ -162,17 +184,52 @@ async function createEventFrame(eventId: string, eventType: string) {
     frame.resize(80, 80);
     frame.cornerRadius = 40; // Torna circular
     
-    // Definir cor amarela para todos os frames
+    // Normalizar o tipo de evento para matching
+    const normalizedEventType = eventType.toLowerCase().trim();
+    console.log(`Tipo de evento normalizado: ${normalizedEventType}`);
+    
+    // Determinar a cor com base no tipo de evento
+    let colorKey = 'interaction'; // Cor padrão caso não encontre correspondência
+    
+    // Verificar correspondência exata primeiro
+    for (const type of EVENT_TYPES) {
+      if (normalizedEventType === type) {
+        colorKey = type;
+        console.log(`Correspondência exata encontrada: ${colorKey}`);
+        break;
+      }
+    }
+    
+    // Se não encontrou correspondência exata, procurar contém
+    if (colorKey === 'interaction' && normalizedEventType !== 'interaction') {
+      for (const type of EVENT_TYPES) {
+        if (normalizedEventType.includes(type)) {
+          colorKey = type;
+          console.log(`Correspondência parcial encontrada: ${colorKey}`);
+          break;
+        }
+      }
+    }
+    
+    // Obtém o valor RGB para esse tipo de evento
+    const color = EVENT_COLORS[colorKey] || EVENT_COLORS.interaction;
+    console.log(`Evento '${eventType}' mapeado para chave '${colorKey}' com cor:`, color);
+    
+    // Aplicar a cor específica do tipo de evento
     frame.fills = [{
       type: 'SOLID',
-      color: { r: 1, g: 1, b: 0 } // Amarelo
+      color: color
     }];
     
     // Criar texto com o eventId
     const textNode = figma.createText();
     textNode.fontName = { family: "Arial", style: "Bold" };
-    textNode.characters = eventId;
-    textNode.fontSize = calculateFontSize(eventId);
+    
+    // Formatar o ID para sempre ter 3 dígitos (padding com zeros à esquerda)
+    const paddedEventId = formatEventIdWithPadding(eventId);
+    textNode.characters = paddedEventId;
+    
+    textNode.fontSize = calculateFontSize(paddedEventId);
     textNode.fills = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 } }]; // Preto
     
     // Centralizar texto
@@ -199,8 +256,18 @@ async function createEventFrame(eventId: string, eventType: string) {
     const selection = figma.currentPage.selection;
     if (selection && selection.length > 0) {
       const selectedNode = selection[0];
-      frame.x = selectedNode.x + selectedNode.width + 10;
-      frame.y = selectedNode.y;
+      
+      // Obter a posição visual do elemento selecionado
+      // Posicionar no lado direito visível do elemento
+      const visibleBounds = selectedNode.absoluteBoundingBox;
+      if (visibleBounds) {
+        frame.x = visibleBounds.x + visibleBounds.width + 4; // 4px à direita da borda visível
+        frame.y = visibleBounds.y;
+      } else {
+        // Fallback para o método anterior
+        frame.x = selectedNode.x + selectedNode.width + 4;
+        frame.y = selectedNode.y;
+      }
     } else {
       frame.x = figma.viewport.center.x - frame.width / 2;
       frame.y = figma.viewport.center.y - frame.height / 2;
@@ -323,6 +390,12 @@ figma.ui.postMessage({
   info: selectionInfo 
 });
 
+// Função para gerar um ID de evento
+function generateEventId(): string {
+  // Gera um número aleatório entre 1 e 999
+  return Math.floor(Math.random() * 999 + 1).toString();
+}
+
 // Ouvir mensagens da UI
 figma.ui.onmessage = async (msg) => {
   try {
@@ -336,60 +409,61 @@ figma.ui.onmessage = async (msg) => {
         });
         break;
         
+      case 'resize':
+        // Handle window resize request
+        if (msg.width && msg.height) {
+          figma.ui.resize(msg.width, msg.height);
+        }
+        break;  
+      
       case 'create-event':
-        // Criar novo evento
-        if (!msg.eventData) {
-          figma.notify("Dados do evento não fornecidos", {error: true});
-          return;
-        }
-        
-        // Validar campos obrigatórios
-        const requiredFields = ['event_name', 'screen_name', 'screen_type', 'component', 'element_text', 'descricao'];
-        for (const field of requiredFields) {
-          if (!msg.eventData[field]) {
-            figma.notify(`Campo obrigatório não preenchido: ${field}`, {error: true});
-            figma.ui.postMessage({ 
-              type: 'validation-error', 
-              field: field 
-            });
-            return;
-          }
-        }
-        
-        // Verificar se evento já existe
-        if (!msg.eventData.force) {
-          const existingCheck = await checkEventExists(msg.eventData);
-          if (existingCheck.exists) {
-            figma.ui.postMessage({ 
-              type: 'event-exists', 
-              existingEvent: existingCheck.event 
-            });
-            return;
-          }
-        }
-        
+        // Criar novo evento de tracking
         try {
-          // Criar evento
-          const result = await createNewEvent(msg.eventData);
+          // Primeiro verificar se o evento já existe
+          const checkResult = await checkEventExists(msg.eventData);
           
-          // Criar frame para o evento
-          if (result.event_id) {
-            const frame = await createEventFrame(result.event_id.toString(), msg.eventData.event_name);
-            
-            if (frame) {
-              figma.notify(`Evento ${result.event_id} criado e registrado com sucesso!`);
-              figma.ui.postMessage({ 
-                type: 'event-created', 
-                eventId: result.event_id 
-              });
-            }
+          if (checkResult.exists) {
+            // Se existe, enviar para a UI para confirmar
+            figma.ui.postMessage({ 
+              type: 'event-exists',
+              existingEvent: checkResult.event
+            });
+            return;
+          }
+          
+          // Se não existe, continuar com a criação
+          const result = await createNewEvent(msg.eventData);
+          if (!result.success) {
+            throw new Error(result.message || "Falha ao salvar evento no Google Sheets");
+          }
+          
+          // Usar o ID retornado do Google Sheets em vez de gerar um aleatório
+          const eventId = result.event_id || generateEventId();
+          
+          // Se salvou com sucesso, criar o frame visual com o ID real
+          const newFrame = await createEventFrame(eventId, msg.eventType || (msg.eventData && msg.eventData.event_name) || 'interaction');
+          if (newFrame) {
+            // Notificar a UI que o evento foi criado
+            figma.ui.postMessage({ type: 'event-created' });
+            figma.notify("Evento criado com sucesso!");
           }
         } catch (error: any) {
-          figma.notify(`Erro ao criar evento: ${error.message || String(error)}`, {error: true});
+          console.error("Erro ao criar evento:", error);
+          figma.notify(`Erro ao salvar evento: ${error.message || String(error)}`, {error: true});
           figma.ui.postMessage({ 
-            type: 'error', 
-            message: error.message || String(error)
+            type: 'error',
+            message: `Falha ao salvar evento: ${error.message || String(error)}`
           });
+        }
+        break;
+        
+      case 'insert-existing-event':
+        // Inserir um evento existente
+        const insertedFrame = await createEventFrame(msg.eventId, msg.eventType);
+        if (insertedFrame) {
+          // Notificar a UI que o evento foi inserido
+          figma.ui.postMessage({ type: 'event-inserted' });
+          figma.notify("Evento existente inserido com sucesso!");
         }
         break;
         
@@ -417,6 +491,9 @@ figma.ui.onmessage = async (msg) => {
           return;
         }
         
+        // Log para debug do tipo de evento
+        console.log(`Adicionando evento existente com tipo: ${msg.eventType || 'interaction'}`);
+        
         const frame = await createEventFrame(msg.eventId.toString(), msg.eventType || 'interaction');
         
         if (frame) {
@@ -435,17 +512,43 @@ figma.ui.onmessage = async (msg) => {
           return;
         }
         
-        const existingFrame = await createEventFrame(
-          msg.event.event_id.toString(), 
-          msg.event.event_name || 'interaction'
-        );
+        try {
+          // Criar frame com o ID do evento existente
+          const existingFrame = await createEventFrame(
+            msg.event.event_id.toString(), 
+            msg.event.event_name || 'interaction'
+          );
+          
+          if (existingFrame) {
+            figma.notify(`Evento existente adicionado com sucesso!`);
+            figma.ui.postMessage({ type: 'event-inserted' });
+          }
+        } catch (error: any) {
+          console.error("Erro ao adicionar evento existente:", error);
+          figma.notify(`Erro: ${error.message || String(error)}`, {error: true});
+        }
+        break;
         
-        if (existingFrame) {
-          figma.notify(`Frame para evento existente ${msg.event.event_id} adicionado!`);
-          figma.ui.postMessage({ 
-            type: 'event-added', 
-            eventId: msg.event.event_id 
-          });
+      case 'create-anyway':
+        try {
+          // Continuar com a criação mesmo com duplicidade
+          const result = await createNewEvent(msg.eventData);
+          if (!result.success) {
+            throw new Error(result.message || "Falha ao salvar evento no Google Sheets");
+          }
+          
+          // Usar o ID retornado
+          const eventId = result.event_id || generateEventId();
+          
+          // Criar o frame visual
+          const newFrame = await createEventFrame(eventId, msg.eventType || (msg.eventData && msg.eventData.event_name) || 'interaction');
+          if (newFrame) {
+            figma.ui.postMessage({ type: 'event-created' });
+            figma.notify("Novo evento criado com sucesso!");
+          }
+        } catch (error: any) {
+          console.error("Erro ao criar evento:", error);
+          figma.notify(`Erro: ${error.message || String(error)}`, {error: true});
         }
         break;
         
@@ -454,14 +557,25 @@ figma.ui.onmessage = async (msg) => {
         break;
         
       default:
-        console.log("Mensagem desconhecida:", msg);
+        console.log("Mensagem não reconhecida:", msg);
     }
   } catch (error: any) {
     console.error("Erro ao processar mensagem:", error);
-    figma.notify(`Erro: ${error.message || String(error)}`, {error: true});
-    figma.ui.postMessage({ 
-      type: 'error', 
-      message: error.message || String(error)
+    figma.ui.postMessage({
+      type: 'error',
+      message: error.message
     });
   }
 };
+
+// Função para formatar o ID do evento com padding de zeros
+function formatEventIdWithPadding(id: string): string {
+  const idStr = id.toString();
+  if (idStr.length >= 3) return idStr;
+  
+  // Adicionar zeros à esquerda
+  if (idStr.length === 1) return '00' + idStr;
+  if (idStr.length === 2) return '0' + idStr;
+  
+  return idStr;
+}
