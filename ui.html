@@ -61,6 +61,9 @@
       color: var(--color-text);
       background: var(--color-background);
       line-height: 1.5;
+      overflow: auto;
+      height: auto;
+      min-height: 0;
     }
 
     /* Typography */
@@ -114,6 +117,8 @@
       font-size: var(--font-size-sm);
       font-family: inherit;
       transition: border-color 0.2s;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
 
     input[type="text"]:focus,
@@ -124,8 +129,9 @@
     }
 
     textarea {
-      min-height: 80px;
+      min-height: 60px;
       resize: vertical;
+      margin-bottom: 0;
     }
 
     .error-message {
@@ -160,6 +166,7 @@
       cursor: pointer;
       width: 100%;
       transition: background-color 0.2s;
+      margin-bottom: 0;
     }
 
     button:hover {
@@ -179,9 +186,33 @@
       max-width: 1200px;
       margin: 0 auto;
       width: 100%;
-      height: 100%;
-      padding: var(--spacing-lg);
+      height: auto;
+      padding: var(--spacing-md) var(--spacing-md) var(--spacing-xs);
       box-sizing: border-box;
+      overflow: auto;
+    }
+
+    /* Garantir responsividade */
+    @media (max-width: 480px) {
+      .main-container {
+        padding: var(--spacing-sm);
+      }
+      
+      .event-details {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    /* Ajustes para quebra de texto em todos os componentes */
+    .event-item, 
+    .dialog, 
+    .selection-info,
+    .form-group,
+    input, 
+    textarea,
+    select {
+      max-width: 100%;
+      word-break: break-word;
     }
 
     .d-none {
@@ -218,12 +249,16 @@
       flex-grow: 1;
       display: flex;
       flex-direction: column;
+      overflow-y: auto;
+      max-height: calc(100vh - 120px);
     }
     
     .tab-pane {
       display: none;
       flex-direction: column;
       flex-grow: 1;
+      overflow-y: auto;
+      padding-right: var(--spacing-xs);
     }
     
     .tab-pane.active {
@@ -237,6 +272,8 @@
       padding: var(--spacing-sm);
       margin-bottom: var(--spacing-md);
       font-size: var(--font-size-sm);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
 
     .no-selection {
@@ -244,10 +281,16 @@
       font-style: italic;
     }
 
+    .selection-detail {
+      margin-bottom: var(--spacing-xxs);
+      display: flex;
+      flex-direction: column;
+    }
+
     .selection-detail strong {
       font-weight: 600;
       display: inline-block;
-      width: 80px;
+      margin-bottom: 2px;
     }
 
     /* Events List */
@@ -322,6 +365,13 @@
       border-radius: 4px;
     }
 
+    .event-description {
+      font-size: var(--font-size-xs);
+      margin-bottom: var(--spacing-xs);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
     .event-details {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -342,9 +392,9 @@
     }
 
     .detail-value {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      white-space: normal;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
 
     /* Filters */
@@ -425,6 +475,19 @@
       color: var(--color-text-light);
     }
 
+    /* Duplicate Event Dialog */
+    #existing-event-info .event-item {
+      margin-bottom: var(--spacing-sm);
+      cursor: default;
+    }
+    
+    #existing-event-info .detail-value {
+      white-space: normal;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      max-width: 100%;
+    }
+
     /* Dialog */
     .dialog {
       background-color: var(--color-background);
@@ -465,8 +528,9 @@
       display: flex;
       flex-direction: column;
       gap: var(--spacing-xs);
-      margin-top: auto;
-      padding-top: var(--spacing-lg);
+      margin-top: var(--spacing-md);
+      padding-top: 0;
+      margin-bottom: 0;
     }
 
     /* Utility Classes */
@@ -482,6 +546,79 @@
 
     .secondary-button:hover {
       background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    /* Autocomplete */
+    .autocomplete-container {
+      position: absolute;
+      width: 100%;
+      max-height: 200px;
+      overflow-y: auto;
+      background-color: white;
+      border: 1px solid var(--color-border);
+      border-radius: 0 0 var(--border-radius) var(--border-radius);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 10;
+    }
+
+    .autocomplete-item {
+      padding: var(--spacing-xs) var(--spacing-sm);
+      cursor: pointer;
+      border-bottom: 1px solid var(--color-border);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .autocomplete-item:last-child {
+      border-bottom: none;
+    }
+
+    .autocomplete-item:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .autocomplete-item.selected {
+      background-color: rgba(0, 149, 255, 0.08);
+    }
+
+    #new-event-form {
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      flex: 1;
+      padding-bottom: 0;
+    }
+    
+    /* Reajustes para eliminar espaço em branco */
+    #new-event-content, #existing-event-content {
+      max-height: none;
+      height: auto;
+      overflow-y: auto;
+      padding-bottom: 0;
+    }
+    
+    /* Ajuste para campo de descrição */
+    #description {
+      min-height: 60px;
+      max-height: 120px;
+    }
+
+    /* Remover espaço vertical extra */
+    .form-group:last-of-type {
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    /* Ajuste fino de altura */
+    html, body, .main-container {
+      min-height: 0;
+      height: auto;
+    }
+    
+    /* Correção para área roxa */
+    #tab-content {
+      height: auto;
+      max-height: none;
+      overflow: visible;
     }
   </style>
 </head>
@@ -565,37 +702,9 @@
       <div id="existing-event-content" class="tab-pane">
       <div class="search-box">
         <span class="search-icon">🔍</span>
-        <input type="text" id="search-events" placeholder="Buscar por ID, nome ou tipo">
+        <input type="text" id="search-events" placeholder="Digite para buscar em todos os campos" autocomplete="off">
+        <div id="autocomplete-results" class="autocomplete-container d-none"></div>
       </div>
-        
-        <!-- Filtros para a lista de eventos -->
-        <div class="filters-container">
-          <div class="filters-header" id="toggle-filters">
-            <span class="filter-icon">🔍</span> Filtros avançados <span class="arrow-icon">▼</span>
-          </div>
-          <div class="filters-body" id="filters-body">
-            <div class="filter-group">
-              <label for="filter-screen-type">Screen Type</label>
-              <input type="text" id="filter-screen-type" placeholder="Filtrar por screen type">
-            </div>
-            <div class="filter-group">
-              <label for="filter-screen-name">Screen Name</label>
-              <input type="text" id="filter-screen-name" placeholder="Filtrar por screen name">
-            </div>
-            <div class="filter-group">
-              <label for="filter-component">Component</label>
-              <input type="text" id="filter-component" placeholder="Filtrar por componente">
-            </div>
-            <div class="filter-group">
-              <label for="filter-element-text">Element Text</label>
-              <input type="text" id="filter-element-text" placeholder="Filtrar por element text">
-            </div>
-            <div class="filter-actions">
-              <button id="apply-filters" class="full-width">Aplicar Filtros</button>
-              <button id="clear-filters" class="secondary-button">Limpar</button>
-            </div>
-          </div>
-        </div>
       
       <div id="events-container" class="events-list">
         <div class="loading">Carregando eventos...</div>
@@ -668,11 +777,28 @@
       }
       
       selectionInfo.innerHTML = `
-        <div class="selection-detail"><strong>Nome:</strong> ${info.nodeName || 'N/A'}</div>
-        <div class="selection-detail"><strong>Tipo:</strong> ${info.nodeType || 'N/A'}</div>
-        ${info.parentFrame ? `<div class="selection-detail"><strong>Frame:</strong> ${info.parentFrame}</div>` : ''}
-        ${info.elementText ? `<div class="selection-detail"><strong>Texto:</strong> ${info.elementText}</div>` : ''}
-        <div class="selection-detail"><strong>Componente:</strong> ${info.componentType || 'N/A'}</div>
+        <div class="selection-detail">
+          <strong>Nome:</strong>
+          <span>${info.nodeName || 'N/A'}</span>
+        </div>
+        <div class="selection-detail">
+          <strong>Tipo:</strong>
+          <span>${info.nodeType || 'N/A'}</span>
+        </div>
+        ${info.parentFrame ? 
+          `<div class="selection-detail">
+            <strong>Frame:</strong>
+            <span>${info.parentFrame}</span>
+          </div>` : ''}
+        ${info.elementText ? 
+          `<div class="selection-detail">
+            <strong>Texto:</strong>
+            <span>${info.elementText}</span>
+          </div>` : ''}
+        <div class="selection-detail">
+          <strong>Componente:</strong>
+          <span>${info.componentType || 'N/A'}</span>
+        </div>
       `;
       
       // Preencher campos do formulário com as informações do elemento
@@ -902,75 +1028,96 @@
       });
     }
 
-    // Função para aplicar filtros
-    function applyFilters() {
-      const screenType = $('filter-screen-type').value.toLowerCase().trim();
-      const screenName = $('filter-screen-name').value.toLowerCase().trim();
-      const component = $('filter-component').value.toLowerCase().trim();
-      const elementText = $('filter-element-text').value.toLowerCase().trim();
-      const searchTerm = $('search-events').value.toLowerCase().trim();
+    // Função para pesquisar eventos
+    function searchEvents(term) {
+      term = term.toLowerCase().trim();
       
-      // Filtrar eventos
-      let filteredEvents = eventsData;
-      
-      // Aplicar filtros de texto para cada campo
-      if (screenType) {
-        filteredEvents = filteredEvents.filter(event => 
-          event.screen_type.toLowerCase().includes(screenType)
-        );
+      // Se o termo estiver vazio, mostrar todos os eventos
+      if (!term) {
+        renderEvents(eventsData);
+        hideAutocomplete();
+        return;
       }
       
-      if (screenName) {
-        filteredEvents = filteredEvents.filter(event => 
-          event.screen_name.toLowerCase().includes(screenName)
-        );
-      }
+      // Filtrar eventos com base no termo de busca
+      const filteredEvents = eventsData.filter(event => 
+        event.id.toLowerCase().includes(term) || 
+        event.type.toLowerCase().includes(term) ||
+        event.description.toLowerCase().includes(term) ||
+        (event.screen_type && event.screen_type.toLowerCase().includes(term)) ||
+        (event.screen_name && event.screen_name.toLowerCase().includes(term)) ||
+        (event.component && event.component.toLowerCase().includes(term)) ||
+        (event.element_text && event.element_text.toLowerCase().includes(term))
+      );
       
-      if (component) {
-        filteredEvents = filteredEvents.filter(event => 
-          event.component.toLowerCase().includes(component)
-        );
-      }
+      // Mostrar resultados de autocomplete
+      showAutocompleteResults(filteredEvents, term);
       
-      if (elementText) {
-        filteredEvents = filteredEvents.filter(event => 
-          event.element_text.toLowerCase().includes(elementText)
-        );
-      }
-      
-      // Aplicar termo de busca
-      if (searchTerm) {
-        filteredEvents = filteredEvents.filter(event => 
-          event.id.toLowerCase().includes(searchTerm) || 
-          event.type.toLowerCase().includes(searchTerm) ||
-          event.description.toLowerCase().includes(searchTerm) ||
-          event.screen_type.toLowerCase().includes(searchTerm) ||
-          event.screen_name.toLowerCase().includes(searchTerm) ||
-          event.component.toLowerCase().includes(searchTerm) ||
-          event.element_text.toLowerCase().includes(searchTerm)
-        );
-      }
-      
-      // Renderizar eventos filtrados
+      // Renderizar eventos filtrados na lista principal
       renderEvents(filteredEvents);
     }
     
-    // Função para limpar todos os filtros
-    function clearFilters() {
-      $('filter-screen-type').value = '';
-      $('filter-screen-name').value = '';
-      $('filter-component').value = '';
-      $('filter-element-text').value = '';
-      $('search-events').value = '';
+    // Função para mostrar resultados no autocomplete
+    function showAutocompleteResults(events, term) {
+      const container = $('autocomplete-results');
       
-      // Recarregar todos os eventos
-      renderEvents(eventsData);
+      // Se não há eventos ou o termo está vazio, esconder autocomplete
+      if (!events.length || !term) {
+        hideAutocomplete();
+        return;
+      }
+      
+      let html = '';
+      // Limitar a 5 resultados para o autocomplete
+      const limitedEvents = events.slice(0, 5);
+      
+      limitedEvents.forEach(event => {
+        html += `
+          <div class="autocomplete-item" data-id="${event.id}" data-type="${event.type}">
+            <strong>${event.id}</strong> - ${event.type}
+            <div>${event.description}</div>
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
+      showElement('autocomplete-results');
+      
+      // Adicionar event listeners aos itens
+      document.querySelectorAll('.autocomplete-item').forEach(item => {
+        item.addEventListener('click', function() {
+          const id = this.dataset.id;
+          const type = this.dataset.type;
+          
+          // Selecionar o evento e esconder autocomplete
+          selectEvent(id, type);
+          hideAutocomplete();
+        });
+      });
     }
-
-    // Função para pesquisar eventos
-    function searchEvents(term) {
-      // Simplesmente aplicar os filtros - a busca já é considerada
-      applyFilters();
+    
+    // Função para esconder autocomplete
+    function hideAutocomplete() {
+      hideElement('autocomplete-results');
+    }
+    
+    // Função para selecionar um evento a partir do autocomplete
+    function selectEvent(id, type) {
+      selectedEventId = id;
+      selectedEventType = type;
+      
+      // Encontrar o evento na lista principal e marcá-lo como selecionado
+      document.querySelectorAll('.event-item').forEach(item => {
+        item.classList.remove('selected');
+        if (item.dataset.id === id) {
+          item.classList.add('selected');
+          // Scrollar para o item
+          item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      });
+      
+      // Inserir o evento
+      insertExistingEvent(id, type);
     }
 
     // Setup resize handle functionality
@@ -1149,37 +1296,21 @@
         searchEvents(this.value);
       });
       
-      // Event listener para o botão de atualizar eventos
-      $('btn-refresh-events').addEventListener('click', loadEvents);
-      
-      // Event listeners para filtros
-      $('toggle-filters').addEventListener('click', function() {
-        const filtersBody = $('filters-body');
-        filtersBody.classList.toggle('open');
+      // Adicionar evento de click fora do autocomplete para fechá-lo
+      document.addEventListener('click', function(e) {
+        const autocomplete = $('autocomplete-results');
+        const searchBox = $('search-events');
         
-        // Atualizar ícone
-        const arrowIcon = this.querySelector('.arrow-icon');
-        if (filtersBody.classList.contains('open')) {
-          arrowIcon.textContent = '▲';
-        } else {
-          arrowIcon.textContent = '▼';
+        if (!autocomplete.contains(e.target) && e.target !== searchBox) {
+          hideAutocomplete();
         }
       });
       
-      // Event listeners para inputs de filtro
-      const filterInputs = ['filter-screen-type', 'filter-screen-name', 'filter-component', 'filter-element-text'];
-      filterInputs.forEach(id => {
-        $(id).addEventListener('input', function() {
-          // Aplicar filtros com delay para não sobrecarregar
-          clearTimeout(this.timer);
-          this.timer = setTimeout(() => {
-            applyFilters();
-          }, 300);
-        });
+      // Event listener para o botão de atualizar eventos
+      $('btn-refresh-events').addEventListener('click', function() {
+        $('search-events').value = ''; // Limpar a busca
+        loadEvents();
       });
-      
-      $('apply-filters').addEventListener('click', applyFilters);
-      $('clear-filters').addEventListener('click', clearFilters);
       
       // Event listeners para o diálogo de evento duplicado
       $('btn-use-existing').addEventListener('click', useExistingEvent);
