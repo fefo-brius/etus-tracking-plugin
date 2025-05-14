@@ -878,91 +878,12 @@
       // Mostrar estado de carregamento
       $('events-container').innerHTML = '<div class="loading">Carregando eventos...</div>';
       
-      // Simular carregamento (no plugin real, buscar do backend)
-      // Aqui seria uma chamada para a API de eventos
-      // Por enquanto, usando dados de exemplo
-      setTimeout(() => {
-        if (eventsData.length === 0) {
-          // Dados de exemplo - em produção, buscar dados reais
-          eventsData = [
-            { 
-              id: '001', 
-              type: 'interaction', 
-              description: 'Clique no botão de login',
-              screen_name: 'tela_login',
-              screen_type: 'onboarding',
-              component: 'button',
-              element_text: 'entrar'
-            },
-            { 
-              id: '002', 
-              type: 'app_screen_view', 
-              description: 'Visualização da tela principal',
-              screen_name: 'tela_principal',
-              screen_type: 'home',
-              component: 'screen',
-              element_text: 'home'
-            },
-            { 
-              id: '003', 
-              type: 'msg_view', 
-              description: 'Visualização de mensagem de boas vindas',
-              screen_name: 'tela_principal',
-              screen_type: 'home',
-              component: 'message',
-              element_text: 'bem_vindo'
-            },
-            { 
-              id: '004', 
-              type: 'answer_quiz', 
-              description: 'Resposta ao quiz de onboarding',
-              screen_name: 'tela_quiz',
-              screen_type: 'onboarding',
-              component: 'form',
-              element_text: 'submit_quiz'
-            },
-            { 
-              id: '005', 
-              type: 'quiz_success', 
-              description: 'Sucesso no quiz de produto',
-              screen_name: 'tela_quiz',
-              screen_type: 'onboarding',
-              component: 'message',
-              element_text: 'quiz_success'
-            },
-            { 
-              id: '006', 
-              type: 'cta_click', 
-              description: 'Clique no botão de compra',
-              screen_name: 'tela_produto',
-              screen_type: 'produto',
-              component: 'button',
-              element_text: 'comprar'
-            },
-            { 
-              id: '007', 
-              type: 'ad_view', 
-              description: 'Visualização de anúncio',
-              screen_name: 'tela_feed',
-              screen_type: 'feed',
-              component: 'ad',
-              element_text: 'ad_banner'
-            },
-            { 
-              id: '008', 
-              type: 'ad_click', 
-              description: 'Clique em anúncio de produto',
-              screen_name: 'tela_feed',
-              screen_type: 'feed',
-              component: 'ad',
-              element_text: 'ad_cta'
-            }
-          ];
+      // Enviar mensagem para o código principal para buscar eventos
+      parent.postMessage({ 
+        pluginMessage: { 
+          type: 'list-events'
         }
-        
-        // Renderizar eventos
-        renderEvents(eventsData);
-      }, 500);
+      }, '*');
     }
 
     // Função para renderizar a lista de eventos
@@ -977,12 +898,12 @@
       let html = '';
       events.forEach(event => {
         html += `
-          <div class="event-item" data-id="${event.id}" data-type="${event.type}">
+          <div class="event-item" data-id="${event.event_id}" data-type="${event.event_name}">
             <div class="event-header">
-              <span class="event-id">${event.id}</span>
-              <span class="event-type">${event.type}</span>
+              <span class="event-id">${event.event_id}</span>
+              <span class="event-type">${event.event_name}</span>
             </div>
-            <div class="event-description">${event.description}</div>
+            <div class="event-description">${event.descricao || 'Sem descrição'}</div>
             <div class="event-details">
               <div class="event-detail">
                 <span class="detail-label">Screen Name:</span>
@@ -1041,9 +962,9 @@
       
       // Filtrar eventos com base no termo de busca
       const filteredEvents = eventsData.filter(event => 
-        event.id.toLowerCase().includes(term) || 
-        event.type.toLowerCase().includes(term) ||
-        event.description.toLowerCase().includes(term) ||
+        event.event_id.toString().toLowerCase().includes(term) || 
+        event.event_name.toLowerCase().includes(term) ||
+        (event.descricao && event.descricao.toLowerCase().includes(term)) ||
         (event.screen_type && event.screen_type.toLowerCase().includes(term)) ||
         (event.screen_name && event.screen_name.toLowerCase().includes(term)) ||
         (event.component && event.component.toLowerCase().includes(term)) ||
@@ -1073,9 +994,9 @@
       
       limitedEvents.forEach(event => {
         html += `
-          <div class="autocomplete-item" data-id="${event.id}" data-type="${event.type}">
-            <strong>${event.id}</strong> - ${event.type}
-            <div>${event.description}</div>
+          <div class="autocomplete-item" data-id="${event.event_id}" data-type="${event.event_name}">
+            <strong>${event.event_id}</strong> - ${event.event_name}
+            <div>${event.descricao || 'Sem descrição'}</div>
           </div>
         `;
       });
@@ -1361,6 +1282,17 @@
         case 'event-exists':
           // Mostrar diálogo de evento duplicado
           showDuplicateEventDialog(message.existingEvent);
+          break;
+          
+        case 'events-list':
+          // Atualizar a lista de eventos com os dados reais
+          eventsData = message.events || [];
+          renderEvents(eventsData);
+          break;
+          
+        case 'events-list-error':
+          // Mostrar erro ao carregar eventos
+          $('events-container').innerHTML = `<div class="loading">Erro ao carregar eventos: ${message.error}</div>`;
           break;
           
         case 'error':

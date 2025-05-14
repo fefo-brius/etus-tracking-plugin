@@ -2,7 +2,7 @@
 // Este script deve ser implantado como um Web App no Google Apps Script
 
 // ID da planilha - substitua pelo ID da sua planilha
-const SHEET_ID = "SEU_ID_DA_PLANILHA_AQUI";
+const SHEET_ID = "1w-10aNxQzXM_a-AU9xfSgiUetPB7nkvrKpV990rI4p8";
 const SHEET_NAME = "Eventos"; // Nome da aba na planilha
 
 // Função principal que processa as solicitações do plugin
@@ -35,12 +35,14 @@ function doGet(e) {
     
     // Retornar resultado como JSON
     output.setContent(JSON.stringify(result));
+    output.withHeaders({'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type'});
     return output;
   } catch (error) {
     // Em caso de erro, retornar mensagem de erro
     const output = ContentService.createTextOutput();
     output.setMimeType(ContentService.MimeType.JSON);
     output.setContent(JSON.stringify({ success: false, message: error.toString() }));
+    output.withHeaders({'Access-Control-Allow-Origin': '*'});
     return output;
   }
 }
@@ -159,4 +161,14 @@ function listEvents() {
   }
   
   return events;
+}
+
+// Function to handle OPTIONS preflight requests
+function doOptions(e) {
+  return ContentService.createTextOutput('')
+      .withHeaders({
+        'Access-Control-Allow-Origin': '*', // Or 'null'
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', // Add other methods if needed
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization' // Add other headers your client might send
+      });
 } 
