@@ -483,6 +483,33 @@
     .secondary-button:hover {
       background-color: rgba(0, 0, 0, 0.05);
     }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--color-success);
+      color: white;
+      padding: var(--spacing-sm) var(--spacing-md);
+      border-radius: var(--border-radius);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      z-index: 1000;
+      opacity: 1;
+      transition: opacity 0.3s;
+    }
+    
+    .toast.d-none {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .toast p {
+      margin: 0;
+      color: white;
+      font-weight: 500;
+    }
   </style>
 </head>
 <body>
@@ -606,8 +633,13 @@
         </div>
       </div>
     </div>
+    
+    <!-- Toast de confirmação -->
+    <div id="confirmation-toast" class="toast d-none">
+      <p>Evento adicionado com sucesso!</p>
+    </div>
   </div>
-  
+
   <div id="resize-handle"></div>
 
   <script>
@@ -629,8 +661,30 @@
       $(id).classList.add('d-none');
     }
 
-    // Função para retornar ao formulário após adicionar um evento
-    function resetForm() {
+    // Função para mostrar a tela de confirmação
+    function showConfirmation() {
+      // Mostrar toast de confirmação
+      const toast = $('confirmation-toast');
+      toast.classList.remove('d-none');
+      
+      // Resetar o formulário
+      $('new-event-form').reset();
+      
+      // Limpar seleção de elementos
+      $('selection-info').innerHTML = '<div class="no-selection">Nenhum elemento selecionado</div>';
+      
+      // Esconder o toast após 3 segundos
+      setTimeout(() => {
+        toast.classList.add('d-none');
+      }, 3000);
+    }
+
+    // Função para voltar às tabs
+    function backToTabs() {
+      // Esconder tela de confirmação
+      hideElement('confirmation-screen');
+      // Mostrar conteúdo das tabs
+      $('tab-content').classList.remove('d-none');
       // Resetar o formulário
       $('new-event-form').reset();
       // Limpar seleção de elementos
@@ -1220,11 +1274,11 @@
           break;
           
         case 'event-created':
-          resetForm();
+          showConfirmation();
           break;
           
         case 'event-inserted':
-          resetForm();
+          showConfirmation();
           break;
           
         case 'event-exists':
