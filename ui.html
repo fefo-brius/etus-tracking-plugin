@@ -49,6 +49,34 @@
       --default-event-color: #9E9E9E;
     }
 
+    /* Loading Overlay */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000; /* Ensure it's on top */
+    }
+
+    .spinner {
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top: 4px solid #fff;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
     /* Reset Styles */
     html, body {
       margin: 0;
@@ -627,6 +655,11 @@
   <div class="main-container" id="app">
       <h1>Plusdin Tracker</h1>
     
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay d-none">
+      <div class="spinner"></div>
+    </div>
+    
     <!-- Tabs Navigation -->
     <div class="tabs" id="main-tabs">
       <div class="tab active" data-tab="new-event">Criar novo evento</div>
@@ -739,6 +772,18 @@
       $(id).classList.add('d-none');
     }
 
+    // Função para mostrar o loader
+    function showLoader() {
+      showElement('loading-overlay');
+      $('btn-create-event').disabled = true;
+    }
+
+    // Função para esconder o loader
+    function hideLoader() {
+      hideElement('loading-overlay');
+      $('btn-create-event').disabled = false;
+    }
+
     // Função para retornar ao formulário após adicionar um evento
     function resetForm() {
       // Resetar o formulário
@@ -747,6 +792,7 @@
       $('selection-info').innerHTML = '<div class="no-selection">Nenhum elemento selecionado</div>';
       // Resetar a lista de eventos
       loadEvents();
+      hideLoader(); // Garantir que o loader seja escondido
     }
 
     // Função para alternar entre as tabs
@@ -845,6 +891,9 @@
           return;
         }
       }
+      
+      // Mostrar loader
+      showLoader();
       
       // Enviar para o código do plugin
       parent.postMessage({ 
@@ -1143,6 +1192,9 @@
         return;
       }
       
+      // Mostrar loader
+      showLoader();
+      
       // Enviar para o código do plugin
       parent.postMessage({ 
         pluginMessage: { 
@@ -1153,6 +1205,7 @@
       
       // Esconder o diálogo
       hideDuplicateEventDialog();
+      hideLoader(); // Esconder o loader
     }
     
     // Função para criar novo evento mesmo com duplicidade
@@ -1163,6 +1216,9 @@
       const component = $('component').value;
       const screenType = $('screen-type').value;
       const description = $('description').value;
+      
+      // Mostrar loader
+      showLoader();
       
       // Enviar para o código do plugin
       parent.postMessage({ 
@@ -1182,6 +1238,7 @@
       
       // Esconder o diálogo
       hideDuplicateEventDialog();
+      hideLoader(); // Esconder o loader
     }
 
     // Inicializar
@@ -1274,15 +1331,18 @@
           
         case 'event-created':
           resetForm();
+          hideLoader(); // Esconder o loader
           break;
           
         case 'event-inserted':
           resetForm();
+          hideLoader(); // Esconder o loader
           break;
           
         case 'event-exists':
           // Mostrar diálogo de evento duplicado
           showDuplicateEventDialog(message.existingEvent);
+          hideLoader(); // Esconder o loader
           break;
           
         case 'events-list':
@@ -1294,10 +1354,12 @@
         case 'events-list-error':
           // Mostrar erro ao carregar eventos
           $('events-container').innerHTML = `<div class="loading">Erro ao carregar eventos: ${message.error}</div>`;
+          hideLoader(); // Esconder o loader em caso de erro ao listar
           break;
           
         case 'error':
           alert(message.message);
+          hideLoader(); // Esconder o loader em caso de erro
           break;
       }
     };
