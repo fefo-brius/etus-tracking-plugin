@@ -36,14 +36,14 @@
       --border-radius: 6px;
       
       /* Event Type Specific Colors */
-      --interaction-color: #FF5722;
-      --app-screen-view-color: #4CAF50;
-      --msg-view-color: #2196F3;
-      --answer-quiz-color: #9C27B0;
-      --quiz-success-color: #FFEB3B;
-      --cta-click-color: #F44336;
-      --ad-view-color: #795548;
-      --ad-click-color: #607D8B;
+      --interaction-color: #FFC700;
+      --app-screen-view-color: #00A3FF;
+      --msg-view-color: #EBFF00;
+      --answer-quiz-color: #D3AFEF;
+      --quiz-success-color: #FC82FF;
+      --cta-click-color: #FC82FF;
+      --ad-view-color: #82FF9D;
+      --ad-click-color: #26D14C;
       
       /* Color for events not in our list */
       --default-event-color: #9E9E9E;
@@ -936,6 +936,61 @@
       }, '*');
     }
 
+    // Função para formatar o ID do evento com padding de zeros
+    function formatEventId(id) {
+      if (!id) return '';
+      
+      const idStr = id.toString();
+      if (idStr.length >= 3) return idStr;
+      
+      // Adicionar zeros à esquerda
+      if (idStr.length === 1) return '00' + idStr;
+      if (idStr.length === 2) return '0' + idStr;
+      
+      return idStr;
+    }
+
+    // Função para determinar a cor com base no tipo de evento
+    function getEventColor(eventType) {
+      if (!eventType) return 'var(--default-event-color)';
+      
+      // Normalizar o tipo de evento para o matching
+      const normalizedType = eventType.toLowerCase().trim();
+      
+      // Verificar correspondência direta
+      switch(normalizedType) {
+        case 'interaction':
+          return 'var(--interaction-color)';
+        case 'app_screen_view':
+          return 'var(--app-screen-view-color)';
+        case 'msg_view':
+          return 'var(--msg-view-color)';
+        case 'answer_quiz':
+          return 'var(--answer-quiz-color)';
+        case 'quiz_success':
+          return 'var(--quiz-success-color)';
+        case 'cta_click':
+          return 'var(--cta-click-color)';
+        case 'ad_view':
+          return 'var(--ad-view-color)';
+        case 'ad_click':
+          return 'var(--ad-click-color)';
+        default:
+          // Verificar correspondência parcial
+          if (normalizedType.includes('interaction')) return 'var(--interaction-color)';
+          if (normalizedType.includes('screen_view') || normalizedType.includes('app_screen')) return 'var(--app-screen-view-color)';
+          if (normalizedType.includes('msg_view') || normalizedType.includes('message')) return 'var(--msg-view-color)';
+          if (normalizedType.includes('quiz') && normalizedType.includes('answer')) return 'var(--answer-quiz-color)';
+          if (normalizedType.includes('quiz') && normalizedType.includes('success')) return 'var(--quiz-success-color)';
+          if (normalizedType.includes('cta') || normalizedType.includes('click')) return 'var(--cta-click-color)';
+          if (normalizedType.includes('ad') && normalizedType.includes('view')) return 'var(--ad-view-color)';
+          if (normalizedType.includes('ad') && normalizedType.includes('click')) return 'var(--ad-click-color)';
+          
+          // Retorna cor padrão se não encontrar correspondência
+          return 'var(--default-event-color)';
+      }
+    }
+
     // Função para renderizar a lista de eventos
     function renderEvents(events) {
       const container = $('events-container');
@@ -947,10 +1002,13 @@
       
       let html = '';
       events.forEach(event => {
+        // Determinar a cor com base no tipo de evento
+        const eventColor = getEventColor(event.event_name);
+        
         html += `
           <div class="event-item" data-id="${event.event_id}" data-type="${event.event_name}">
             <div class="event-header">
-              <span class="event-id">${event.event_id}</span>
+              <span class="event-id" style="background-color: ${eventColor};">${formatEventId(event.event_id)}</span>
               <span class="event-type">${event.event_name}</span>
             </div>
             <div class="event-description">${event.descricao || 'Sem descrição'}</div>
@@ -1043,9 +1101,11 @@
       const limitedEvents = events.slice(0, 5);
       
       limitedEvents.forEach(event => {
+        const eventColor = getEventColor(event.event_name);
+        
         html += `
           <div class="autocomplete-item" data-id="${event.event_id}" data-type="${event.event_name}">
-            <strong>${event.event_id}</strong> - ${event.event_name}
+            <strong class="event-id" style="background-color: ${eventColor};">${formatEventId(event.event_id)}</strong> - ${event.event_name}
             <div>${event.descricao || 'Sem descrição'}</div>
           </div>
         `;
@@ -1136,10 +1196,12 @@
     function showDuplicateEventDialog(existingEvent) {
       // Preencher as informações do evento existente
       const eventInfo = $('existing-event-info');
+      const eventColor = getEventColor(existingEvent.event_name);
+      
       eventInfo.innerHTML = `
         <div class="event-item">
           <div class="event-header">
-            <span class="event-id">${existingEvent.event_id}</span>
+            <span class="event-id" style="background-color: ${eventColor};">${formatEventId(existingEvent.event_id)}</span>
             <span class="event-type">${existingEvent.event_name}</span>
           </div>
           <div class="event-details">
