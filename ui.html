@@ -952,43 +952,67 @@
 
     // Função para determinar a cor com base no tipo de evento
     function getEventColor(eventType) {
-      if (!eventType) return 'var(--default-event-color)';
+      if (!eventType) return { bgColor: 'var(--default-event-color)', textColor: 'white' };
       
       // Normalizar o tipo de evento para o matching
       const normalizedType = eventType.toLowerCase().trim();
       
+      // Cor do texto padrão é branca, mas para msg_view será #4A4B4C
+      const isMessageView = normalizedType === 'msg_view' || 
+                           (normalizedType.includes('msg_view') || normalizedType.includes('message'));
+      const textColor = isMessageView ? '#4A4B4C' : 'white';
+      
       // Verificar correspondência direta
+      let bgColor;
       switch(normalizedType) {
         case 'interaction':
-          return 'var(--interaction-color)';
+          bgColor = 'var(--interaction-color)';
+          break;
         case 'app_screen_view':
-          return 'var(--app-screen-view-color)';
+          bgColor = 'var(--app-screen-view-color)';
+          break;
         case 'msg_view':
-          return 'var(--msg-view-color)';
+          bgColor = 'var(--msg-view-color)';
+          break;
         case 'answer_quiz':
-          return 'var(--answer-quiz-color)';
+          bgColor = 'var(--answer-quiz-color)';
+          break;
         case 'quiz_success':
-          return 'var(--quiz-success-color)';
+          bgColor = 'var(--quiz-success-color)';
+          break;
         case 'cta_click':
-          return 'var(--cta-click-color)';
+          bgColor = 'var(--cta-click-color)';
+          break;
         case 'ad_view':
-          return 'var(--ad-view-color)';
+          bgColor = 'var(--ad-view-color)';
+          break;
         case 'ad_click':
-          return 'var(--ad-click-color)';
+          bgColor = 'var(--ad-click-color)';
+          break;
         default:
           // Verificar correspondência parcial
-          if (normalizedType.includes('interaction')) return 'var(--interaction-color)';
-          if (normalizedType.includes('screen_view') || normalizedType.includes('app_screen')) return 'var(--app-screen-view-color)';
-          if (normalizedType.includes('msg_view') || normalizedType.includes('message')) return 'var(--msg-view-color)';
-          if (normalizedType.includes('quiz') && normalizedType.includes('answer')) return 'var(--answer-quiz-color)';
-          if (normalizedType.includes('quiz') && normalizedType.includes('success')) return 'var(--quiz-success-color)';
-          if (normalizedType.includes('cta') || normalizedType.includes('click')) return 'var(--cta-click-color)';
-          if (normalizedType.includes('ad') && normalizedType.includes('view')) return 'var(--ad-view-color)';
-          if (normalizedType.includes('ad') && normalizedType.includes('click')) return 'var(--ad-click-color)';
-          
-          // Retorna cor padrão se não encontrar correspondência
-          return 'var(--default-event-color)';
+          if (normalizedType.includes('interaction')) 
+            bgColor = 'var(--interaction-color)';
+          else if (normalizedType.includes('screen_view') || normalizedType.includes('app_screen')) 
+            bgColor = 'var(--app-screen-view-color)';
+          else if (normalizedType.includes('msg_view') || normalizedType.includes('message')) 
+            bgColor = 'var(--msg-view-color)';
+          else if (normalizedType.includes('quiz') && normalizedType.includes('answer')) 
+            bgColor = 'var(--answer-quiz-color)';
+          else if (normalizedType.includes('quiz') && normalizedType.includes('success')) 
+            bgColor = 'var(--quiz-success-color)';
+          else if (normalizedType.includes('cta') || normalizedType.includes('click')) 
+            bgColor = 'var(--cta-click-color)';
+          else if (normalizedType.includes('ad') && normalizedType.includes('view')) 
+            bgColor = 'var(--ad-view-color)';
+          else if (normalizedType.includes('ad') && normalizedType.includes('click')) 
+            bgColor = 'var(--ad-click-color)';
+          else
+            // Retorna cor padrão se não encontrar correspondência
+            bgColor = 'var(--default-event-color)';
       }
+      
+      return { bgColor, textColor };
     }
 
     // Função para renderizar a lista de eventos
@@ -1003,12 +1027,12 @@
       let html = '';
       events.forEach(event => {
         // Determinar a cor com base no tipo de evento
-        const eventColor = getEventColor(event.event_name);
+        const { bgColor, textColor } = getEventColor(event.event_name);
         
         html += `
           <div class="event-item" data-id="${event.event_id}" data-type="${event.event_name}">
             <div class="event-header">
-              <span class="event-id" style="background-color: ${eventColor};">${formatEventId(event.event_id)}</span>
+              <span class="event-id" style="background-color: ${bgColor}; color: ${textColor};">${formatEventId(event.event_id)}</span>
               <span class="event-type">${event.event_name}</span>
             </div>
             <div class="event-description">${event.descricao || 'Sem descrição'}</div>
@@ -1101,11 +1125,11 @@
       const limitedEvents = events.slice(0, 5);
       
       limitedEvents.forEach(event => {
-        const eventColor = getEventColor(event.event_name);
+        const { bgColor, textColor } = getEventColor(event.event_name);
         
         html += `
           <div class="autocomplete-item" data-id="${event.event_id}" data-type="${event.event_name}">
-            <strong class="event-id" style="background-color: ${eventColor};">${formatEventId(event.event_id)}</strong> - ${event.event_name}
+            <strong class="event-id" style="background-color: ${bgColor}; color: ${textColor};">${formatEventId(event.event_id)}</strong> - ${event.event_name}
             <div>${event.descricao || 'Sem descrição'}</div>
           </div>
         `;
@@ -1196,12 +1220,12 @@
     function showDuplicateEventDialog(existingEvent) {
       // Preencher as informações do evento existente
       const eventInfo = $('existing-event-info');
-      const eventColor = getEventColor(existingEvent.event_name);
+      const { bgColor, textColor } = getEventColor(existingEvent.event_name);
       
       eventInfo.innerHTML = `
         <div class="event-item">
           <div class="event-header">
-            <span class="event-id" style="background-color: ${eventColor};">${formatEventId(existingEvent.event_id)}</span>
+            <span class="event-id" style="background-color: ${bgColor}; color: ${textColor};">${formatEventId(existingEvent.event_id)}</span>
             <span class="event-type">${existingEvent.event_name}</span>
           </div>
           <div class="event-details">
