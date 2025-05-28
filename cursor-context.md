@@ -73,3 +73,56 @@ Ao selecionar essa opção, o usuário deve ver uma tabela com as mesmas colunas
 ## 2. Criar o frame no Figma 
 Após incluir os dados na planilha do google sheets, o plugin deve inserir um frame arredondado com um texto com o event_id do evento selecionado seguindo os mesmos padrões de cores descritos anteriormente. 
 
+# Funcionalidades Adicionais Implementadas
+
+## Formatação de ID
+Os IDs de eventos são formatados para sempre terem pelo menos 3 dígitos, adicionando zeros à esquerda quando necessário. Por exemplo, o ID "1" é exibido como "001" e o ID "25" é exibido como "025".
+
+## Detecção de Evento Duplicado
+Quando o usuário tenta criar um evento com características que já existem na planilha (mesmo event_name, screen_name, screen_type, component e element_text), o plugin detecta essa duplicidade e exibe um diálogo com as seguintes opções:
+1. **Usar Evento Existente**: Insere o ID do evento existente no canvas
+2. **Criar Novo Mesmo Assim**: Ignora a duplicidade e cria um novo registro com um novo ID
+
+Este diálogo exibe detalhes completos do evento duplicado para que o usuário possa tomar uma decisão informada.
+
+## Busca com Autocomplete
+A funcionalidade de busca de eventos existentes inclui:
+- Busca em tempo real à medida que o usuário digita
+- Autocomplete que mostra até 5 resultados mais relevantes
+- Busca em todos os campos do evento (ID, nome, descrição, etc.)
+- Visualização rápida dos detalhes principais do evento nos resultados
+
+## Validação de Formulários
+O plugin implementa validação de formulários que:
+- Verifica se todos os campos obrigatórios foram preenchidos
+- Destaca visualmente os campos com erro
+- Impede o envio do formulário até que todos os erros sejam corrigidos
+- Remove visualmente os erros quando o usuário começa a editar o campo
+
+## Redimensionamento do Plugin
+Um manipulador de redimensionamento no canto inferior direito permite ao usuário ajustar o tamanho da janela do plugin para acomodar mais informações ou economizar espaço na tela.
+
+## Verificação Periódica de Seleção
+O plugin verifica periodicamente a seleção atual do usuário no Figma (a cada 1 segundo) para atualizar automaticamente os campos do formulário com informações do elemento selecionado.
+
+## Indicadores de Carregamento
+Indicadores visuais de carregamento são exibidos durante operações assíncronas, como:
+- Criação de um novo evento
+- Carregamento da lista de eventos existentes
+- Verificação de duplicidade de eventos
+- Inserção de eventos existentes
+
+## Estilos e Design
+O plugin implementa um sistema de design tokens para consistência visual, incluindo:
+- Cores e tipografia padronizadas
+- Espaçamento consistente
+- Estados interativos para botões e campos
+- Feedback visual para ações do usuário
+- Cores específicas para cada tipo de evento
+
+## Navegação por Abas
+O plugin permite navegar facilmente entre as duas funcionalidades principais usando um sistema de abas na parte superior da interface.
+
+## Rastreamento de Modificações do Usuário
+Os campos do formulário são marcados como "modificados pelo usuário" quando editados, garantindo que a seleção automática não substitua os dados já inseridos intencionalmente pelo usuário.
+
